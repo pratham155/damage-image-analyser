@@ -1,38 +1,92 @@
-.App {
-  text-align: center;
+body {
+  font-family: 'Roboto', sans-serif;
+  /* background-color: #f5f5f5;  Light grey background  */
+  margin: 0;
+  padding: 0;
+  height: 100%; /* Ensure body takes full height */
+  overflow: hidden; /* Prevents the default scrollbar */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.custom-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  background-color: #003366; /* GE Blue */
+  padding: 0 20px;
+  border-bottom: 4px solid #0055a5; /* Slightly darker blue for bottom border */
+}
+
+.logo img {
+  height: 40px;
+  margin-right: 20px;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.ant-menu-dark .ant-menu-item-selected {
+  background-color: #004080 !important; /* Slightly darker blue for selected item */
+}
+
+.ant-menu-dark .ant-menu-item:hover {
+  background-color: #0055a5 !important; /* Another shade of blue for hover */
+}
+
+.ant-menu-dark {
+  background-color: #003366; /* Match the header background color */
+}
+
+.ant-layout-content {
+  background-color: #ffffff; /* White background for content area */
+  padding: 0 20px;
+  border-radius: 8px;
+  margin: 20px;
+  flex: 1;
+  overflow: hidden; /* Prevent inner scrolling */
+}
+
+.login-container {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  height: 100vh;
+  
 }
 
-.App-link {
-  color: #61dafb;
+.login-form {
+  width: 300px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Styling for the Send button */
+.send-button {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 0;
+}
+
+.send-button .ant-btn {
+  background-color: #0055a5; /* Blue color for the Send button */
+  border-color: #0055a5;
+}
+
+.send-button .ant-btn:hover {
+  background-color: #004080; /* Slightly darker blue on hover */
+  border-color: #004080;
+}
+
+.question-input {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.question-input input {
+  flex: 1;
+  margin-right: 10px;
 }

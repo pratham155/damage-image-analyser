@@ -1,0 +1,44 @@
+.images-component {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    height: 100vh; /* Ensure the component takes the full height of the viewport */
+    box-sizing: border-box;
+  }
+  
+  .image-container {
+    display: flex;
+    height: calc(100% - 220px); /* Adjust height considering form and search button */
+    overflow: hidden;
+  }
+  
+  .image-list {
+    width: 25%; /* List takes up 25% of the width */
+    margin-right: 16px; /* Space between list and selected image */
+    overflow-y: auto;
+    border-right: 1px solid #e0e0e0; /* Add right border to differentiate */
+    padding-right: 16px;
+  }
+  
+  .selected-image-container {
+    width: 75%; /* Selected image takes up the remaining width */
+    padding-left: 16px;
+    overflow-y: auto;
+  }
+  
+  .selected-image img {
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  .list-item-content {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0; /* Add bottom border to each list item */
+    display: flex;
+    align-items: center;
+  }
+  
+  .list-item-content h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+  

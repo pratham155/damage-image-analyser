@@ -1,0 +1,102 @@
+.images-component {
+  font-family: Arial, sans-serif;
+}
+
+.form-row, .date-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.form-row > div, .date-row > div {
+  flex: 1;
+  min-width: 200px;
+}
+
+.form-row {
+  margin-bottom: 1rem;
+}
+
+.button-container {
+  margin-top: 1rem;
+}
+
+.image-display {
+  margin-top: 1rem;
+}
+
+.image-display img {
+  max-width: 100%;
+  height: auto;
+}
+
+select {
+  margin-left: 0.5rem;
+}
+
+.images-component {
+  /* Optional: Add general styles for the images-component container */
+  padding: 20px;
+}
+
+.flex-row {
+  display: flex;
+  gap: 10px; /* Adjust spacing between items */
+}
+
+.date-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px; /* Adjust spacing as needed */
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end; /* Aligns the button to the right */
+  margin-top: 20px; /* Space above the button, adjust as needed */
+}
+
+button {
+  padding: 10px 20px; /* Adjust padding as needed */
+  font-size: 16px; /* Adjust font size as needed */
+  background-color: #007bff; /* Primary color for the button */
+  color: white;
+  border: none;
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+.images-component {
+  padding: 16px;
+}
+
+.image-container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.image-list {
+  width: 25%; /* List takes up 25% of the width */
+  margin-right: 16px; /* Space between list and selected image */
+}
+
+.selected-image-container {
+  width: 75%; /* Selected image takes up the remaining width */
+}
+
+.selected-image img {
+  width: 100%;
+  max-width: 600px;
+}
+
+.search-button-container {
+  display: flex;
+  justify-content: flex-end; /* Aligns the button to the right */
+  margin-top: 16px; /* Optional: add space above the button */
+}
+
+
+
+
+
