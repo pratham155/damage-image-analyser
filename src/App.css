@@ -1,6 +1,7 @@
 body {
-  font-family: 'Roboto', sans-serif;
-  /* background-color: #f5f5f5;  Light grey background  */
+  font-family: 'Roboto', sans-serif !important;
+  color: #333333; /* Dark Grey for text */
+  background-color: #FFFFFF; /* White background */
   margin: 0;
   padding: 0;
   height: 100%; /* Ensure body takes full height */
@@ -10,9 +11,10 @@ body {
 .custom-header {
   display: flex;
   align-items: center;
-  background-color: #003366; /* GE Blue */
+  background-color: #1C4E80; /* Deep Purple for header */
   padding: 0 20px;
-  border-bottom: 4px solid #0055a5; /* Slightly darker blue for bottom border */
+  border-bottom: 4px solid #1C4E80; /* Slightly darker shade of Deep Purple for bottom border */
+  color: #FFFFFF; /* White font color */
 }
 
 .logo img {
@@ -24,22 +26,25 @@ body {
   display: flex;
   align-items: center;
   margin-left: auto;
+  color: #FFFFFF; /* White font color for user profile items */
 }
 
 .ant-menu-dark .ant-menu-item-selected {
-  background-color: #004080 !important; /* Slightly darker blue for selected item */
+  background-color: #FF1493 !important; /* Vibrant Pink for selected item */
+  color: #FFFFFF !important; /* White font color for selected item */
 }
 
 .ant-menu-dark .ant-menu-item:hover {
-  background-color: #0055a5 !important; /* Another shade of blue for hover */
+  background-color: #FF1493 !important; /* Vibrant Pink for hover */
+  color: #FFFFFF !important; /* White font color for hover state */
 }
 
 .ant-menu-dark {
-  background-color: #003366; /* Match the header background color */
+  background-color: #1C4E80; /* Deep Purple to match header */
 }
 
 .ant-layout-content {
-  background-color: #ffffff; /* White background for content area */
+  background-color: #FFFFFF; /* White background for content area */
   padding: 0 20px;
   border-radius: 8px;
   margin: 20px;
@@ -52,13 +57,12 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  
 }
 
 .login-form {
   width: 300px;
   padding: 24px;
-  background: #fff;
+  background: #FFFFFF; /* White background for the form */
   border-radius: 8px;
 }
 
@@ -70,13 +74,13 @@ body {
 }
 
 .send-button .ant-btn {
-  background-color: #0055a5; /* Blue color for the Send button */
-  border-color: #0055a5;
+  background-color: #4B0082; /* Deep Purple for the Send button */
+  border-color: #4B0082;
 }
 
 .send-button .ant-btn:hover {
-  background-color: #004080; /* Slightly darker blue on hover */
-  border-color: #004080;
+  background-color: #3b0064; /* Slightly darker Deep Purple on hover */
+  border-color: #3b0064;
 }
 
 .question-input {
