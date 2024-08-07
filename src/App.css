@@ -18,9 +18,17 @@ body {
 }
 
 .logo img {
-  height: 40px;
-  margin-right: 20px;
+  height: 47px;
+  /* margin-right: 20px; */
+  width: 75px;
 }
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin-right: 20px; /* Adjust as needed to align properly */
+}
+
 
 .user-profile {
   display: flex;
@@ -30,14 +38,14 @@ body {
 }
 
 .ant-menu-dark .ant-menu-item-selected {
-  background-color: #FF1493 !important; /* Vibrant Pink for selected item */
-  color: #FFFFFF !important; /* White font color for selected item */
+  background-color: #CED2CC !important; /* Vibrant Pink for selected item */
+  color: black !important; /* White font color for selected item */
 }
 
-.ant-menu-dark .ant-menu-item:hover {
+/* .ant-menu-dark .ant-menu-item:hover {
   background-color: #FF1493 !important; /* Vibrant Pink for hover */
-  color: #FFFFFF !important; /* White font color for hover state */
-}
+  /* color: black !important; /* White font color for hover state */
+/* } */ 
 
 .ant-menu-dark {
   background-color: #1C4E80; /* Deep Purple to match header */
@@ -74,13 +82,13 @@ body {
 }
 
 .send-button .ant-btn {
-  background-color: #4B0082; /* Deep Purple for the Send button */
-  border-color: #4B0082;
+  background-color: #1C4E80; /* Deep Purple for the Send button */
+  border-color: #1C4E80;
 }
 
 .send-button .ant-btn:hover {
-  background-color: #3b0064; /* Slightly darker Deep Purple on hover */
-  border-color: #3b0064;
+  background-color: #1C4E80; /* Slightly darker Deep Purple on hover */
+  border-color: #1C4E80;
 }
 
 .question-input {

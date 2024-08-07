@@ -7,7 +7,7 @@ const isAuthenticated = () => {
 };
 
 const PrivateRoute = ({ component: Component }) => {
-  return isAuthenticated() ? <Component /> : <Navigate to="/" />;
+  return isAuthenticated() ? <Component /> : <Navigate to="/damage-image" />;
 };
 
 export default PrivateRoute;

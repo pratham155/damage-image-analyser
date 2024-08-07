@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, Select, DatePicker, Button, Form, Row, Col, Spin } from 'antd';
+import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, Divider } from 'antd';
 import config from './config';
 import './DamageImage.css';
 
@@ -10,7 +10,7 @@ const productTypes = [
   "Commercial AC",
   "Zoneline",
   "Refrigeration",
-  "Dish",
+  "Dishwasher",
   "Cooking",
   "Ductless",
   "Freezer",
@@ -35,9 +35,10 @@ const DamageImage = () => {
   const [model, setModel] = useState('null');
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  const [imageList, setImageList] = useState([]); // State to manage the list of images
-  const [selectedImage, setSelectedImage] = useState(null); // State to manage the selected image
+  const [imageList, setImageList] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [imageLoading, setImageLoading] = useState(false); // State for image loading
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,7 +55,6 @@ const DamageImage = () => {
           fetch(`${config.BASE_URL}?dataset=getModels`, { headers })
         ]);
 
-        // Check if responses are OK
         if (!partsResponse.ok || !damageResponse.ok || !severityResponse.ok || !modelsResponse.ok) {
           throw new Error('Failed to fetch data from one or more APIs');
         }
@@ -79,6 +79,7 @@ const DamageImage = () => {
   }, []);
 
   const handleSearch = async () => {
+    setLoading(true);
     try {
       const headers = {
         'Content-Type': 'application/json',
@@ -108,16 +109,19 @@ const DamageImage = () => {
       setSelectedImage(null); // Clear the selected image
     } catch (error) {
       console.error('Error fetching images:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleItemClick = (image) => {
     setSelectedImage(image);
+    setImageLoading(true);
   };
 
-  if (loading) {
-    return <Spin />;
-  }
+  const handleImageLoad = () => {
+    setImageLoading(false);
+  };
 
   return (
     <div className="images-component">
@@ -189,52 +193,62 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
           <Col span={4}>
-            <Form.Item label="Book Date Range">
-              <RangePicker
-                value={fromDate && toDate ? [fromDate, toDate] : []}
-                onChange={(dates) => {
-                  if (dates) {
-                    setFromDate(dates[0]);
-                    setToDate(dates[1]);
-                  }
-                }}
-              />
-            </Form.Item>
+            <ConfigProvider theme={{ token: { colorPrimary: '#1890ff', colorText: 'black' } }}>
+              <Form.Item label="Book Date Range">
+                <RangePicker
+                  value={fromDate && toDate ? [fromDate, toDate] : []}
+                  onChange={(dates) => {
+                    if (dates) {
+                      setFromDate(dates[0]);
+                      setToDate(dates[1]);
+                    }
+                  }}
+                />
+              </Form.Item>
+            </ConfigProvider>
           </Col>
-          <Col span={4}>
+          <Col span={24} style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Form.Item>
-              <div className="search-button-container">
-                <Button type="primary" onClick={handleSearch}>Search Images</Button>
-              </div>
+              <Button type="primary" onClick={handleSearch}>Search Images</Button>
             </Form.Item>
           </Col>
         </Row>
       </Form>
-      {/* Container for image list and selected image */}
-      <div className="image-container">
-        <div className="image-list">
-          <h3 className="list-header">Image List</h3>
-          <List
-            dataSource={imageList}
-            renderItem={item => (
-              <List.Item onClick={() => handleItemClick(item)} className="list-item">
-                <div className="list-item-content">
-                  <h3>{item.title}</h3>
-                </div>
-              </List.Item>
+      {/* Display loading spinner */}
+      {loading ? (
+        <div className="loading-spinner">
+          <Spin size="large" />
+        </div>
+      ) : (
+        <div className="image-container">
+          <div className="image-list">
+            <List
+              size="large"
+              header={<div>Search Images</div>}
+              bordered
+              dataSource={imageList}
+              renderItem={item => (
+                <List.Item onClick={() => handleItemClick(item)} className="list-item">
+                  <Typography.Text mark>[IMAGE]</Typography.Text> {item.title}
+                </List.Item>
+              )}
+            />
+          </div>
+          <div className="selected-image-container">
+            {imageLoading && (
+              <div className="loading-spinner">
+                <Spin size="large" />
+              </div>
             )}
-          />
+            {selectedImage && (
+              <div className="selected-image">
+                <h2>{selectedImage.title}</h2>
+                <img src={selectedImage.path} alt={selectedImage.title} onLoad={handleImageLoad} />
+              </div>
+            )}
+          </div>
         </div>
-        <div className="selected-image-container">
-          {/* Display selected image */}
-          {selectedImage && (
-            <div className="selected-image">
-              <h2>{selectedImage.title}</h2>
-              <img src={selectedImage.path} alt={selectedImage.title} />
-            </div>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -1,168 +1,174 @@
 .images-component {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    height: 100vh; /* Ensure the component takes the full height of the viewport */
-    box-sizing: border-box;
-  }
-  
-  .image-container {
-    display: flex;
-    height: calc(100% - 220px); /* Adjust height considering form and search button */
-    overflow: hidden;
-  }
-  
-  .image-list {
-    width: 30%; /* List takes up 30% of the width */
-    margin-right: 16px; /* Space between list and selected image */
-    overflow-y: auto;
-    border-right: 1px solid #4B0082; /* Deep Purple border to differentiate */
-    padding-right: 16px;
-  }
-  
-  .list-header {
-    font-size: 18px;
-    font-weight: bold;
-    color: #4B0082; /* Deep Purple */
-    margin-bottom: 10px;
-    padding: 10px;
-    border-bottom: 1px solid #4B0082; /* Deep Purple bottom border */
-  }
-  
-  .selected-image-container {
-    width: 70%; /* Selected image takes up the remaining width */
-    padding-left: 16px;
-    overflow-y: auto;
-  }
-  
-  .selected-image img {
-    width: 100%;
-    max-width: 600px;
-  }
-  
-  .list-item-content {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .list-item {
-    border-bottom: 1px solid #4B0082; /* Deep Purple bottom border */
-    cursor: pointer;
-  }
-  
-  .list-item:hover {
-    background-color: rgb(20, 228, 255); /* Vibrant Pink on hover */
-    color: #FFFFFF;
-  }
-  
-  .list-item h3 {
-    margin: 0;
-    font-size: 16px;
-    color: #333333; /* Dark Grey Text Color */
-  }
-  
-  .search-button-container {
-    display: flex;
-    justify-content: flex-end; /* Align the button to the right */
-    align-items: center;
-    height: 100%;
-  }
-  
-  /* Main App Styles */
-  body {
-    font-family: 'Roboto', sans-serif !important;
-    color: #333333; /* Dark Grey for text */
-    background-color: #FFFFFF; /* White background */
-    margin: 0;
-    padding: 0;
-    height: 100%; /* Ensure body takes full height */
-    overflow: hidden; /* Prevents the default scrollbar */
-  }
-  
-  .custom-header {
-    display: flex;
-    align-items: center;
-    background-color: #4B0082; /* Deep Purple for header */
-    padding: 0 20px;
-    border-bottom: 4px solid #3b0064; /* Slightly darker shade of Deep Purple for bottom border */
-    color: #FFFFFF; /* White font color */
-  }
-  
-  .logo img {
-    height: 40px;
-    margin-right: 20px;
-  }
-  
-  .user-profile {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-    color: #FFFFFF; /* White font color for user profile items */
-  }
-  
-  .ant-menu-dark .ant-menu-item-selected {
-    background-color: #CED2CC !important; /* Vibrant Pink for selected item */
-    color: #FFFFFF !important; /* White font color for selected item */
-  }
-  
-  .ant-menu-dark .ant-menu-item:hover {
-    background-color: #F1F1F1 !important; /* Vibrant Pink for hover */
-    color: #000 !important; /* White font color for hover state */
-  }
-  
-  .ant-menu-dark {
-    background-color: #1C4E80; /* Deep Purple to match header */
-  }
-  
-  .ant-layout-content {
-    background-color: #FFFFFF; /* White background for content area */
-    padding: 0 20px;
-    border-radius: 8px;
-    margin: 20px;
-    flex: 1;
-    overflow: hidden; /* Prevent inner scrolling */
-  }
-  
-  .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  .login-form {
-    width: 300px;
-    padding: 24px;
-    background: #FFFFFF; /* White background for the form */
-    border-radius: 8px;
-  }
-  
-  /* Styling for the Send button */
-  .send-button {
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px 0;
-  }
-  
-  .send-button .ant-btn {
-    background-color: #1C4E80; /* Deep Purple for the Send button */
-    border-color: #4B0082;
-  }
-  
-  .send-button .ant-btn:hover {
-    background-color: #1C4E80; /* Slightly darker Deep Purple on hover */
-    border-color: #1C4E80;
-  }
-  
-  .question-input {
-    width: 100%;
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .question-input input {
-    flex: 1;
-    margin-right: 10px;
-  }
-  
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  height: 100vh; /* Ensure the component takes the full height of the viewport */
+  box-sizing: border-box;
+  font-weight: 500;
+}
+
+.image-container {
+  display: flex;
+  height: calc(100% - 220px); /* Adjust height considering form and search button */
+  overflow: hidden;
+}
+
+.image-list {
+  width: 30%; /* List takes up 30% of the width */
+  margin-right: 16px; /* Space between list and selected image */
+  overflow-y: auto;
+  /* Deep Purple border to differentiate */
+  padding-right: 16px;
+}
+
+.list-header {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4B0082; /* Deep Purple */
+  margin-bottom: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #4B0082; /* Deep Purple bottom border */
+}
+
+.selected-image-container {
+  width: 70%; /* Selected image takes up the remaining width */
+  padding-left: 16px;
+  overflow-y: auto;
+}
+
+.selected-image img {
+  width: 100%;
+  max-width: 600px;
+}
+
+.list-item-content {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.list-item {
+  border-bottom: 1px solid #4B0082; /* Deep Purple bottom border */
+  cursor: pointer;
+}
+
+.list-item:hover {
+  background-color:#577FB5; /* Vibrant Pink on hover */
+  color: #FFFFFF;
+}
+
+.list-item h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333333; /* Dark Grey Text Color */
+}
+
+.search-button-container {
+  display: flex;
+  justify-content: flex-end; /* Align the button to the right */
+  align-items: center;
+  height: 100%;
+}
+
+/* Main App Styles */
+body {
+  font-family: 'Roboto', sans-serif !important;
+  color: #333333; /* Dark Grey for text */
+  background-color: #FFFFFF; /* White background */
+  margin: 0;
+  padding: 0;
+  height: 100%; /* Ensure body takes full height */
+  overflow: hidden; /* Prevents the default scrollbar */
+}
+
+
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  color: #FFFFFF; /* White font color for user profile items */
+}
+
+/* .ant-menu-dark .ant-menu-item-selected {
+  background-color: #CED2CC !important; 
+  color: black !important; 
+} */
+
+.ant-menu-dark .ant-menu-item:hover {
+  background-color: #F1F1F1 !important; /* Vibrant Pink for hover */
+  color: #000 !important; /* White font color for hover state */
+}
+
+.ant-menu-dark {
+  background-color: #1C4E80; /* Deep Purple to match header */
+}
+
+.ant-layout-content {
+  background-color: #FFFFFF; /* White background for content area */
+  padding: 0 20px;
+  border-radius: 8px;
+  margin: 20px;
+  flex: 1;
+  overflow: hidden; /* Prevent inner scrolling */
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-form {
+  width: 300px;
+  padding: 24px;
+  background: #FFFFFF; /* White background for the form */
+  border-radius: 8px;
+}
+
+/* Styling for the Send button */
+.send-button {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 0;
+}
+
+.send-button .ant-btn {
+  background-color: #1C4E80; /* Deep Purple for the Send button */
+  border-color: #4B0082;
+}
+
+
+.send-button .ant-btn:hover {
+  background-color: #1C4E80; /* Slightly darker Deep Purple on hover */
+  border-color: #1C4E80;
+}
+
+.question-input {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.question-input input {
+  flex: 1;
+  margin-right: 10px;
+}
+.search-button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+.loading-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.selected-image-container .loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

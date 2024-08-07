@@ -2,29 +2,63 @@ body, html, #root {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Prevents the default scrollbar */
+    overflow: hidden; 
     background-color: #fff;
+    font-weight: 550 !important;
    
   }
   
-  .chat-layout {
+   .chat-layout {
     height: 100vh;
+    position: relative;
     display: flex;
-    flex-direction: column;
-    background-color: #fff;
   }
   
   .chat-content {
     display: flex;
     flex-direction: column;
-    flex: 1;
     padding: 20px;
+    flex: 1;
+    overflow: hidden; /* Prevent scrolling */
+  }
+  
+  .question-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .question-button {
+    width: 220px; /* Adjust width as needed */
+    height: auto;
+    padding: 10px; /* Add padding for spacing */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     background-color: #fff;
     border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    margin: 20px;
-    overflow: hidden; /* Prevents inner scrolling */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
   }
+  
+  .question-button:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+  }
+  
+  .question-button p {
+    margin: 0;
+    padding: 0;
+    word-wrap: break-word;
+    white-space: normal;
+  }
+  
   
   .chat-messages {
     flex: 1;
@@ -34,10 +68,13 @@ body, html, #root {
   
   .chat-input {
     display: flex;
+    align-items: center;
     gap: 10px;
-    padding: 10px;
+    padding-top: 10px;
+    margin-top: auto; /* Push the input area to the bottom */
     background-color: #f9f9f9;
     border-top: 1px solid #e0e0e0;
+    padding-bottom: 20px;
   }
   
   .chat-input textarea {
@@ -52,7 +89,9 @@ body, html, #root {
   .message {
     display: flex;
     align-items: flex-start;
-    margin: 5px 0;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 8px;
   }
   
   .message-icon {
@@ -67,65 +106,37 @@ body, html, #root {
     flex: 1;
   }
   
-  .message.question .message-content {
+  .message.question {
     background-color: #e6f7ff;
   }
   
-  .message.answer .message-content {
+  .message.answer {
     background-color: #fafafa;
   }
   
-  .question-buttons {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    justify-content: space-between;
-  }
-  
-  .question-button {
-    flex: 1; /* Ensure buttons take up equal space */
-    height: 100px;
-    text-align: center;
+  .loading-spinner {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f0f0f0;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    cursor: pointer;
-    word-wrap: break-word; /* Wrap text inside the button */
-    padding: 10px;
-    white-space: normal; /* Allow text to wrap */
+    height: 100%;
   }
   
-  .question-button:hover {
-    background-color: #e0e0e0;
-  }
-  
-  .panel-toggles {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-  }
-  
-  .collapse-button {
-    align-self: center;
-    margin: 10px 0;
-  }
-  
-  /* Add styles for the table */
-  .chat-messages table {
+  table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
   }
   
-  .chat-messages table, .chat-messages th, .chat-messages td {
-    border: 1px solid #888; /* Darker border color */
-  }
-  
-  .chat-messages th, .chat-messages td {
+  th, td {
+    border: 1px solid #ddd; /* Add borders to table cells */
     padding: 8px;
+  }
+  
+  th {
+    background-color: #f2f2f2;
     text-align: left;
   }
   
+  /* tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+   */
