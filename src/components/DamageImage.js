@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, Divider } from 'antd';
+import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, Divider, message } from 'antd';
 import config from './config';
 import './DamageImage.css';
 
@@ -38,7 +38,7 @@ const DamageImage = () => {
   const [imageList, setImageList] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [imageLoading, setImageLoading] = useState(false); // State for image loading
+  const [imageLoading, setImageLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,6 +79,11 @@ const DamageImage = () => {
   }, []);
 
   const handleSearch = async () => {
+    if (productType === 'null' || damageType === 'null' || damageSeverity === 'null' || partDamagedType === 'null' || model === 'null' || !fromDate || !toDate) {
+      message.error('Please select all options');
+      return;
+    }
+
     setLoading(true);
     try {
       const headers = {
@@ -214,7 +219,6 @@ const DamageImage = () => {
           </Col>
         </Row>
       </Form>
-      {/* Display loading spinner */}
       {loading ? (
         <div className="loading-spinner">
           <Spin size="large" />
