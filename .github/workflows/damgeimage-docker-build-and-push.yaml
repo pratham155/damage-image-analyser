@@ -1,0 +1,121 @@
+name: "Build and Push Docker Image"
+
+on:
+  # Triggers the workflow on push to the main branch
+  push:
+    branches: [main, develop]
+
+  # Enables this workflow to be manually triggered
+  workflow_dispatch:
+
+jobs:
+  docker-build-and-push:
+    name: Docker Build and Push
+    runs-on: ubuntu-latest
+    environment: prod
+
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: "read"
+      id-token: "write"
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Step 2: Set account env variables based on branch
+      - name: Set account env variables based on branch
+        id: set-env
+        run: |
+          if [[ main == ${{github.ref_name}} ]]; then
+            echo ENVIRONMENT=prd >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-prod@fulfilai-fulfillment-d-1-5d7.iam.gserviceaccount.com >> $GITHUB_ENV
+            echo WORKLOAD_IDENTITY_PROVIDER=projects/fulfilai-fulfillment-d-1-5d7/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
+          elif [[ develop == ${{github.ref_name}} ]]; then
+            echo ENVIRONMENT=int >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-dev@fulfilai-fulfillment-d-1-5d7.iam.gserviceaccount.com >> $GITHUB_ENV
+            echo WORKLOAD_IDENTITY_PROVIDER=projects/fulfilai-fulfillment-d-1-5d7/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-dev/providers/fulfilai-wkldid-pool-provider-dev >> $GITHUB_ENV
+          fi
+
+
+      # Step 3: Authenticate to Google Cloud
+      - name: "Authenticate to Google Cloud"
+        id: "auth"
+        uses: "google-github-actions/auth@v1"
+        with:
+          token_format: "access_token"
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+
+      # Step 4: Get Environmental Variables
+      - name: Get Environmental Variables
+        run: |
+          if [[ main == ${{github.ref_name}} ]]; then
+            echo DOCKER_TAGS=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7/fulfilai-docker-repository/httpd-gar-img:latest >> $GITHUB_ENV
+            GCP_CLIENT_EMAIL=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_CLIENT_EMAIL --project=fulfilai-fulfillment-d-1-5d7)
+            echo "::add-mask:: $GCP_CLIENT_EMAIL"
+            echo GCP_CLIENT_EMAIL=$GCP_CLIENT_EMAIL >> $GITHUB_ENV
+            GCP_PRIVATE_KEY=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_PRIVATE_KEY --project=fulfilai-fulfillment-d-1-5d7)
+            echo "::add-mask:: $GCP_PRIVATE_KEY"
+            echo GCP_PRIVATE_KEY=$GCP_PRIVATE_KEY >> $GITHUB_ENV
+            AUTH_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_SECRET --project=fulfilai-fulfillment-d-1-5d7)
+            echo "::add-mask:: $AUTH_SECRET"
+            echo AUTH_SECRET=$AUTH_SECRET >> $GITHUB_ENV
+            AUTH_CLIENT_ID=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_ID --project=fulfilai-fulfillment-d-1-5d7)
+            echo "::add-mask:: $AUTH_CLIENT_ID"
+            echo AUTH_CLIENT_ID=$AUTH_CLIENT_ID >> $GITHUB_ENV
+            AUTH_CLIENT_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_SECRET --project=fulfilai-fulfillment-d-1-5d7)
+            echo "::add-mask:: $AUTH_CLIENT_SECRET"
+            echo AUTH_CLIENT_SECRET=$AUTH_CLIENT_SECRET >> $GITHUB_ENV
+            AUTH_AUDIENCE=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_AUDIENCE --project=fulfilai-fulfillment-d-1-5d7)
+            echo AUTH_AUDIENCE=$AUTH_AUDIENCE >> $GITHUB_ENV
+          elif [[ develop == ${{github.ref_name}} ]]; then
+            echo DOCKER_TAGS=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7/fulfilai-docker-repository/httpd-gar-img:latest >> $GITHUB_ENV
+            GCP_CLIENT_EMAIL=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_CLIENT_EMAIL --project=fulfilai-fulfillment-d-1-5d7)
+            echo "::add-mask:: $GCP_CLIENT_EMAIL"
+            echo GCP_CLIENT_EMAIL=$GCP_CLIENT_EMAIL >> $GITHUB_ENV    
+            GCP_PRIVATE_KEY=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_PRIVATE_KEY --project=fulfilai-fulfillment-d-1-5d7)
+            echo "::add-mask:: $GCP_PRIVATE_KEY"
+            echo GCP_PRIVATE_KEY=$GCP_PRIVATE_KEY >> $GITHUB_ENV
+            AUTH_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_SECRET --project=fulfilai-fulfillment-d-1-5d7)
+            echo "::add-mask:: $AUTH_SECRET"
+            echo AUTH_SECRET=$AUTH_SECRET >> $GITHUB_ENV
+            AUTH_CLIENT_ID=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_ID --project=fulfilai-fulfillment-d-1-5d7)
+            echo "::add-mask:: $AUTH_CLIENT_ID"
+            echo AUTH_CLIENT_ID=$AUTH_CLIENT_ID >> $GITHUB_ENV
+            AUTH_CLIENT_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_SECRET --project=fulfilai-fulfillment-d-1-5d7)
+            echo "::add-mask:: $AUTH_CLIENT_SECRET"
+            echo AUTH_CLIENT_SECRET=$AUTH_CLIENT_SECRET >> $GITHUB_ENV
+            AUTH_AUDIENCE=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_AUDIENCE --project=fulfilai-fulfillment-d-1-5d7)
+            echo AUTH_AUDIENCE=$AUTH_AUDIENCE >> $GITHUB_ENV
+          fi
+      
+      # setp 6: 
+      - name: Copy .env File
+        run: |
+          cp fulfilai-fulfillment-app/.env.${{ env.ENVIRONMENT }} fulfilai-fulfillment-app/.env
+          export $(cat fulfilai-fulfillment-app/.env | grep -v '^#' | xargs)
+          echo FULFILAI_BASE_API_URL=$FULFILAI_BASE_API_URL >> $GITHUB_ENV
+
+
+
+      # Step 7: Login to Docker
+      - uses: docker/login-action@v3
+        with:
+          registry: "gcr.io"
+          username: "oauth2accesstoken"
+          password: "${{ steps.auth.outputs.access_token }}"
+
+      # Step 8: Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step 9: Build and push Docker image
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./
+          file: ./Dockerfile
+          push: true
+          tags: gcr.io/fulfilai-fulfillment-d-1-5d7f/fulfilai-fulfillment-app:latest
