@@ -1,0 +1,57 @@
+name: "Damage Image - Deploy to Cloud Run"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-and-deploy:
+    name: Damage Image - Deploy to Cloud Run
+    runs-on: ubuntu-latest
+    environment: prod
+
+    permissions:
+      contents: "read"
+      id-token: "write"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set Environment Variables
+        run: |
+          if [[ "main" == "${{ github.ref_name }}" ]]; then
+            echo ENVIRONMENT=prd >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-prod@fulfilai-fulfillment-d-1-5d7.iam.gserviceaccount.com >> $GITHUB_ENV
+            echo WORKLOAD_IDENTITY_PROVIDER=projects/fulfilai-fulfillment-d-1-5d7/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
+            echo DOCKER_IMAGE=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7/fulfilai-docker-repository/damage-image:latest >> $GITHUB_ENV
+            echo VPC_CONNECTOR=projects/fulfilai-fulfillment-d-1-5d7/locations/us-central1/connectors/fulfilai-vpc-connector >> $GITHUB_ENV
+          else
+            echo ENVIRONMENT=int >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-dev@fulfilai-fulfillment-d-1-5d7.iam.gserviceaccount.com >> $GITHUB_ENV
+            echo WORKLOAD_IDENTITY_PROVIDER=projects/fulfilai-fulfillment-d-1-5d7/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool-dev/providers/fulfilai-wkld-id-pool-provider-dev >> $GITHUB_ENV
+            echo DOCKER_IMAGE=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7/fulfilai-docker-repository/damage-image:latest >> $GITHUB_ENV
+            echo VPC_CONNECTOR=projects/fulfilai-fulfillment-d-1-5d7/locations/us-central1/connectors/fulfilai-vpc-connector-dev >> $GITHUB_ENV
+          fi
+
+      - id: "auth"
+        name: "Authenticate to Google Cloud"
+        uses: "google-github-actions/auth@v1"
+        with:
+          token_format: "access_token"
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+
+      - name: Deploy to Cloud Run
+        run: |-
+          gcloud run deploy "damage-image-service" \
+            --region "us-central1" \
+            --image ${{ env.DOCKER_IMAGE }} \
+            --ingress internal-and-cloud-load-balancing \
+            --session-affinity \
+            --vpc-egress "all" \
+            --vpc-connector ${{ env.VPC_CONNECTOR }} \
+            --port 80 \
+            --allow-unauthenticated \
+            --memory 1Gi \
+            --platform "managed" \
+            --quiet
