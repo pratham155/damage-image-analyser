@@ -45,7 +45,7 @@ jobs:
         uses: "google-github-actions/auth@v1"
         with:
           token_format: "access_token"
-          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          workload_identity_provider: projects/fulfilai-fulfillment-d-1-5d7/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-d/providers/fulfilai-wkldid-pool-provider-d
           service_account: ${{ env.SERVICE_ACCOUNT }}
 
       # Step 4: Get Environmental Variables
