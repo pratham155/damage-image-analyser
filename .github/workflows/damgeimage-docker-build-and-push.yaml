@@ -30,12 +30,12 @@ jobs:
         run: |
           if [[ main == ${{github.ref_name}} ]]; then
             echo ENVIRONMENT=prd >> $GITHUB_ENV
-            echo SERVICE_ACCOUNT=fulfilai-gha-prod@750864996575.iam.gserviceaccount.com >> $GITHUB_ENV
-            echo WORKLOAD_IDENTITY_PROVIDER=projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-prod@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com >> $GITHUB_ENV
+            echo WORKLOAD_IDENTITY_PROVIDER=projects/fulfilai-fulfillment-d-1-5d7f/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
           elif [[ develop == ${{github.ref_name}} ]]; then
             echo ENVIRONMENT=int >> $GITHUB_ENV
-            echo SERVICE_ACCOUNT=fulfilai-gha-dev@750864996575.iam.gserviceaccount.com >> $GITHUB_ENV
-            echo WORKLOAD_IDENTITY_PROVIDER=projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-dev/providers/fulfilai-wkldid-pool-provider-dev >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-dev@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com >> $GITHUB_ENV
+            echo WORKLOAD_IDENTITY_PROVIDER=projects/fulfilai-fulfillment-d-1-5d7f/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-dev/providers/fulfilai-wkldid-pool-provider-dev >> $GITHUB_ENV
           fi
 
       # Step 3: Authenticate to Google Cloud
@@ -51,42 +51,42 @@ jobs:
       - name: Get Environmental Variables
         run: |
           if [[ main == ${{github.ref_name}} ]]; then
-            echo DOCKER_TAGS=us-central1-docker.pkg.dev/750864996575/fulfilai-docker-repository/httpd-gar-img:latest >> $GITHUB_ENV
-            GCP_CLIENT_EMAIL=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_CLIENT_EMAIL --project=750864996575)
+            echo DOCKER_TAGS=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository/httpd-gar-img:latest >> $GITHUB_ENV
+            GCP_CLIENT_EMAIL=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_CLIENT_EMAIL --project=fulfilai-fulfillment-d-1-5d7f)
             echo "::add-mask:: $GCP_CLIENT_EMAIL"
             echo GCP_CLIENT_EMAIL=$GCP_CLIENT_EMAIL >> $GITHUB_ENV
-            GCP_PRIVATE_KEY=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_PRIVATE_KEY --project=750864996575)
+            GCP_PRIVATE_KEY=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_PRIVATE_KEY --project=fulfilai-fulfillment-d-1-5d7f)
             echo "::add-mask:: $GCP_PRIVATE_KEY"
             echo GCP_PRIVATE_KEY=$GCP_PRIVATE_KEY >> $GITHUB_ENV
-            AUTH_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_SECRET --project=750864996575)
+            AUTH_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_SECRET --project=fulfilai-fulfillment-d-1-5d7f)
             echo "::add-mask:: $AUTH_SECRET"
             echo AUTH_SECRET=$AUTH_SECRET >> $GITHUB_ENV
-            AUTH_CLIENT_ID=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_ID --project=750864996575)
+            AUTH_CLIENT_ID=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_ID --project=fulfilai-fulfillment-d-1-5d7f)
             echo "::add-mask:: $AUTH_CLIENT_ID"
             echo AUTH_CLIENT_ID=$AUTH_CLIENT_ID >> $GITHUB_ENV
-            AUTH_CLIENT_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_SECRET --project=750864996575)
+            AUTH_CLIENT_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_SECRET --project=fulfilai-fulfillment-d-1-5d7f)
             echo "::add-mask:: $AUTH_CLIENT_SECRET"
             echo AUTH_CLIENT_SECRET=$AUTH_CLIENT_SECRET >> $GITHUB_ENV
-            AUTH_AUDIENCE=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_AUDIENCE --project=750864996575)
+            AUTH_AUDIENCE=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_AUDIENCE --project=fulfilai-fulfillment-d-1-5d7f)
             echo AUTH_AUDIENCE=$AUTH_AUDIENCE >> $GITHUB_ENV
           elif [[ develop == ${{github.ref_name}} ]]; then
-            echo DOCKER_TAGS=us-central1-docker.pkg.dev/750864996575/fulfilai-docker-repository/httpd-gar-img:latest >> $GITHUB_ENV
-            GCP_CLIENT_EMAIL=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_CLIENT_EMAIL --project=750864996575)
+            echo DOCKER_TAGS=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository/httpd-gar-img:latest >> $GITHUB_ENV
+            GCP_CLIENT_EMAIL=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_CLIENT_EMAIL --project=fulfilai-fulfillment-d-1-5d7f)
             echo "::add-mask:: $GCP_CLIENT_EMAIL"
             echo GCP_CLIENT_EMAIL=$GCP_CLIENT_EMAIL >> $GITHUB_ENV    
-            GCP_PRIVATE_KEY=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_PRIVATE_KEY --project=750864996575)
+            GCP_PRIVATE_KEY=$(gcloud secrets versions access latest --secret=FULFILAI_GCP_PRIVATE_KEY --project=fulfilai-fulfillment-d-1-5d7f)
             echo "::add-mask:: $GCP_PRIVATE_KEY"
             echo GCP_PRIVATE_KEY=$GCP_PRIVATE_KEY >> $GITHUB_ENV
-            AUTH_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_SECRET --project=750864996575)
+            AUTH_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_SECRET --project=fulfilai-fulfillment-d-1-5d7f)
             echo "::add-mask:: $AUTH_SECRET"
             echo AUTH_SECRET=$AUTH_SECRET >> $GITHUB_ENV
-            AUTH_CLIENT_ID=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_ID --project=750864996575)
+            AUTH_CLIENT_ID=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_ID --project=fulfilai-fulfillment-d-1-5d7f)
             echo "::add-mask:: $AUTH_CLIENT_ID"
             echo AUTH_CLIENT_ID=$AUTH_CLIENT_ID >> $GITHUB_ENV
-            AUTH_CLIENT_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_SECRET --project=750864996575)
+            AUTH_CLIENT_SECRET=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_CLIENT_SECRET --project=fulfilai-fulfillment-d-1-5d7f)
             echo "::add-mask:: $AUTH_CLIENT_SECRET"
             echo AUTH_CLIENT_SECRET=$AUTH_CLIENT_SECRET >> $GITHUB_ENV
-            AUTH_AUDIENCE=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_AUDIENCE --project=750864996575)
+            AUTH_AUDIENCE=$(gcloud secrets versions access latest --secret=FULFILAI_AUTH0_AUDIENCE --project=fulfilai-fulfillment-d-1-5d7f)
             echo AUTH_AUDIENCE=$AUTH_AUDIENCE >> $GITHUB_ENV
           fi
       
@@ -115,4 +115,4 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: gcr.io/750864996575/fulfilai-fulfillment-app:latest
+          tags: gcr.io/fulfilai-fulfillment-d-1-5d7f/fulfilai-fulfillment-app:latest
