@@ -34,7 +34,7 @@ jobs:
             echo WORKLOAD_IDENTITY_PROVIDER=projects/fulfilai-fulfillment-d-1-5d7f/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
           elif [[ develop == ${{github.ref_name}} ]]; then
             echo ENVIRONMENT=int >> $GITHUB_ENV
-            echo SERVICE_ACCOUNT=fulfilai-gha-dev@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-750864996575@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com >> $GITHUB_ENV
             echo WORKLOAD_IDENTITY_PROVIDER=projects/fulfilai-fulfillment-d-1-5d7f/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-dev/providers/fulfilai-wkldid-pool-provider-dev >> $GITHUB_ENV
           fi
 
