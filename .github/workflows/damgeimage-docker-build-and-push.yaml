@@ -93,9 +93,18 @@ jobs:
       # Step 6: Copy .env File
       - name: Copy .env File
         run: |
-          cp fulfilai-fulfillment-app/.env.${{ env.ENVIRONMENT }} fulfilai-fulfillment-app/.env
+          if [ -f "fulfilai-fulfillment-app/.env.${{ env.ENVIRONMENT }}" ]; then
+            cp "fulfilai-fulfillment-app/.env.${{ env.ENVIRONMENT }}" "fulfilai-fulfillment-app/.env"
+          elif [ -f "fulfilai-fulfillment-app/src/.env.${{ env.ENVIRONMENT }}" ]; then
+            cp "fulfilai-fulfillment-app/src/.env.${{ env.ENVIRONMENT }}" "fulfilai-fulfillment-app/src/.env"
+          else
+            echo "Environment file for ${{ env.ENVIRONMENT }} not found in either location."
+            exit 1
+          fi
+
           export $(cat fulfilai-fulfillment-app/.env | grep -v '^#' | xargs)
           echo FULFILAI_BASE_API_URL=$FULFILAI_BASE_API_URL >> $GITHUB_ENV
+
 
       # Step 7: Login to Docker
       - uses: docker/login-action@v3
