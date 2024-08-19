@@ -30,7 +30,7 @@ jobs:
         run: |
           if [[ main == ${{ github.ref_name }} ]]; then
             echo ENVIRONMENT=prd >> $GITHUB_ENV
-            echo SERVICE_ACCOUNT=fulfilai-gha-prod@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-485662822083@fulfilai-fulfillment-p-1-b6ad.iam.gserviceaccount.com >> $GITHUB_ENV
             echo WORKLOAD_IDENTITY_PROVIDER=projects/485662822083/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
           elif [[ develop == ${{ github.ref_name }} ]]; then
             echo ENVIRONMENT=int >> $GITHUB_ENV
@@ -44,22 +44,22 @@ jobs:
         uses: "google-github-actions/auth@v1"
         with:
           token_format: "access_token"
-          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          workload_identity_provider: projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-d/providers/fulfilai-wkldid-pool-provider-d
           service_account: ${{ env.SERVICE_ACCOUNT }}
 
-      # Step 4: Login to Docker
-      - name: Login to Docker
-        uses: docker/login-action@v3
+    
+      # Step 6: Login to Docker
+      - uses: docker/login-action@v3
         with:
           registry: "gcr.io"
           username: "oauth2accesstoken"
           password: "${{ steps.auth.outputs.access_token }}"
 
-      # Step 5: Set up Docker Buildx
+      # Step 7: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 6: Build and push Docker image
+      # Step 8: Build and push Docker image
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
@@ -67,3 +67,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: gcr.io/fulfilai-fulfillment-d-1-5d7f/fulfilai-fulfillment-app:latest
+         
+          
