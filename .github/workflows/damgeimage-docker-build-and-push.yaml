@@ -91,11 +91,11 @@ jobs:
           fi
       
       # Step 5: Copy .env File
-      - name: Copy .env File
-        run: |
-          cp fulfilai-fulfillment-app/.env.${{ env.ENVIRONMENT }} fulfilai-fulfillment-app/.env
-          export $(cat fulfilai-fulfillment-app/.env | grep -v '^#' | xargs)
-          echo FULFILAI_BASE_API_URL=$FULFILAI_BASE_API_URL >> $GITHUB_ENV
+      # - name: Copy .env File
+      #   run: |
+      #     cp fulfilai-fulfillment-app/.env.${{ env.ENVIRONMENT }} fulfilai-fulfillment-app/.env
+      #     export $(cat fulfilai-fulfillment-app/.env | grep -v '^#' | xargs)
+      #     echo FULFILAI_BASE_API_URL=$FULFILAI_BASE_API_URL >> $GITHUB_ENV
 
       # Step 6: Login to Docker
       - uses: docker/login-action@v3
