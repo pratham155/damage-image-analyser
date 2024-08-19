@@ -47,7 +47,9 @@ jobs:
           workload_identity_provider: projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-d/providers/fulfilai-wkldid-pool-provider-d
           service_account: fulfilai-gha-750864996575@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com 
 
-    
+       # Add Debug Info step here
+      - name: Debug Info
+        run: env
       # Step 6: Login to Docker
       - uses: docker/login-action@v3
         with:
