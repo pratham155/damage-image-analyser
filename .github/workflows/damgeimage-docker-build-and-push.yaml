@@ -53,7 +53,7 @@ jobs:
       # Step 6: Login to Docker
       - uses: docker/login-action@v3
         with:
-          registry: "gcr.io"
+          registry: "us-central1-docker.pkg.dev"
           username: "oauth2accesstoken"
           password: "${{ steps.auth.outputs.access_token }}"
 
@@ -75,7 +75,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: gcr.io/fulfilai-fulfillment-d-1-5d7f/fulfilai-custom-image:latest
+          tags: us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-custom-image:latest
 
          
           
