@@ -70,11 +70,12 @@ jobs:
 
       # Step 8: Build and push Docker image
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v3
         with:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: gcr.io/fulfilai-fulfillment-d-1-5d7f/fulfilai-fulfillment-app:latest
+          tags: gcr.io/fulfilai-fulfillment-d-1-5d7f/fulfilai-custom-image:latest
+
          
           
