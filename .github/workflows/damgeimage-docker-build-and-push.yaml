@@ -25,18 +25,18 @@ jobs:
         uses: actions/checkout@v3
 
       # Step 2: Set account env variables based on branch
-      - name: Set account env variables based on branch
-        id: set-env
-        run: |
-          if [[ main == ${{ github.ref_name }} ]]; then
-            echo ENVIRONMENT=prd >> $GITHUB_ENV
-            echo SERVICE_ACCOUNT=fulfilai-gha-485662822083@fulfilai-fulfillment-p-1-b6ad.iam.gserviceaccount.com >> $GITHUB_ENV
-            echo WORKLOAD_IDENTITY_PROVIDER=projects/485662822083/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
-          elif [[ develop == ${{ github.ref_name }} ]]; then
-            echo ENVIRONMENT=int >> $GITHUB_ENV
-            echo SERVICE_ACCOUNT=fulfilai-gha-750864996575@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com >> $GITHUB_ENV
-            echo WORKLOAD_IDENTITY_PROVIDER=projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-dev/providers/fulfilai-wkldid-pool-provider-dev >> $GITHUB_ENV
-          fi
+      # - name: Set account env variables based on branch
+      #   id: set-env
+      #   run: |
+      #     if [[ main == ${{ github.ref_name }} ]]; then
+      #       echo ENVIRONMENT=prd >> $GITHUB_ENV
+      #       echo SERVICE_ACCOUNT=fulfilai-gha-485662822083@fulfilai-fulfillment-p-1-b6ad.iam.gserviceaccount.com >> $GITHUB_ENV
+      #       echo WORKLOAD_IDENTITY_PROVIDER=projects/485662822083/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
+      #     elif [[ develop == ${{ github.ref_name }} ]]; then
+      #       echo ENVIRONMENT=int >> $GITHUB_ENV
+      #       echo SERVICE_ACCOUNT=fulfilai-gha-750864996575@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com >> $GITHUB_ENV
+      #       echo WORKLOAD_IDENTITY_PROVIDER=projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-dev/providers/fulfilai-wkldid-pool-provider-dev >> $GITHUB_ENV
+      #     fi
 
       # Step 3: Authenticate to Google Cloud
       - name: "Authenticate to Google Cloud"
