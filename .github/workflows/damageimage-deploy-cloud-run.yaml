@@ -19,18 +19,18 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          if [[ "main" == "${{ github.ref_name }}" ]]; then
+          if [[ main == "${{ github.ref_name }}" ]]; then
             echo ENVIRONMENT=prd >> $GITHUB_ENV
-            echo SERVICE_ACCOUNT=fulfilai-gha-prod@fulfilai-fulfillment-d-1-5d7.iam.gserviceaccount.com >> $GITHUB_ENV
-            echo WORKLOAD_IDENTITY_PROVIDER=projects/fulfilai-fulfillment-d-1-5d7/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
-            echo DOCKER_IMAGE=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7/fulfilai-docker-repository/damage-image:latest >> $GITHUB_ENV
-            echo VPC_CONNECTOR=projects/fulfilai-fulfillment-d-1-5d7/locations/us-central1/connectors/fulfilai-vpc-connector >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-485662822083@fulfilai-fulfillment-p-1-b6ad.iam.gserviceaccount.com>> $GITHUB_ENV
+            echo WORKLOAD_IDENTITY_PROVIDER=projects/485662822083/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
+            echo DOCKER_IMAGE=us-central1-docker.pkg.dev/fulfilai-fulfillment-p-1-b6ad/fulfilai-docker-repository/damage-image:latest >> $GITHUB_ENV
+            echo VPC_CONNECTOR=projects/fulfilai-fulfillment-p-1-b6ad/locations/us-central1/connectors/fulfilai-vpc-connector >> $GITHUB_ENV
           else
             echo ENVIRONMENT=int >> $GITHUB_ENV
-            echo SERVICE_ACCOUNT=fulfilai-gha-dev@fulfilai-fulfillment-d-1-5d7.iam.gserviceaccount.com >> $GITHUB_ENV
-            echo WORKLOAD_IDENTITY_PROVIDER=projects/fulfilai-fulfillment-d-1-5d7/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool-dev/providers/fulfilai-wkld-id-pool-provider-dev >> $GITHUB_ENV
-            echo DOCKER_IMAGE=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7/fulfilai-docker-repository/damage-image:latest >> $GITHUB_ENV
-            echo VPC_CONNECTOR=projects/fulfilai-fulfillment-d-1-5d7/locations/us-central1/connectors/fulfilai-vpc-connector-dev >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-750864996575@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com >> $GITHUB_ENV
+            echo WORKLOAD_IDENTITY_PROVIDER=projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-dev/providers/fulfilai-wkldid-pool-provider-dev >> $GITHUB_ENV
+            echo DOCKER_IMAGE=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository/damage-image:latest >> $GITHUB_ENV
+            echo VPC_CONNECTOR=projects/fulfilai-fulfillment-d-1-5d7f/locations/us-central1/connectors/fulfilai-vpc-connector-dev >> $GITHUB_ENV
           fi
 
       - id: "auth"
