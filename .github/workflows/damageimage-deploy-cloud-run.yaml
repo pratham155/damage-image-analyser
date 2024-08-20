@@ -48,7 +48,7 @@ jobs:
             --image ${{ env.DOCKER_IMAGE }} \
             --ingress internal-and-cloud-load-balancing \
             --session-affinity \
-            --port 80 \
+            --port 8080 \
             --allow-unauthenticated \
             --memory 1Gi \
             --platform "managed" \
