@@ -23,7 +23,7 @@ jobs:
             echo ENVIRONMENT=prd >> $GITHUB_ENV
             echo SERVICE_ACCOUNT=fulfilai-gha-485662822083@fulfilai-fulfillment-p-1-b6ad.iam.gserviceaccount.com>> $GITHUB_ENV
             echo WORKLOAD_IDENTITY_PROVIDER=projects/485662822083/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
-            echo DOCKER_IMAGE=us-east4-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository-use4/damage-image:latest >> $GITHUB_ENV
+            echo DOCKER_IMAGE=us-east4-docker.pkg.dev/fulfilai-fulfillment-p-1-b6ad/fulfilai-docker-repository-use4/damage-image:latest >> $GITHUB_ENV
             
           else
             echo ENVIRONMENT=int >> $GITHUB_ENV
@@ -43,8 +43,8 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |-
-          gcloud run deploy "damage-image-service" \
-            --region "us-central1" \
+          gcloud run deploy "damage-image-phase1-service" \
+            --region "us-east4" \
             --image ${{ env.DOCKER_IMAGE }} \
             --ingress internal-and-cloud-load-balancing \
             --session-affinity \
