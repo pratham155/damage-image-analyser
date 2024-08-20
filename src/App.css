@@ -53,9 +53,9 @@ body {
 
 .ant-layout-content {
   background-color: #FFFFFF; /* White background for content area */
-  padding: 0 20px;
+  padding: 0 5px;
   border-radius: 8px;
-  margin: 20px;
+  /* margin: 20px; */
   flex: 1;
   overflow: hidden; /* Prevent inner scrolling */
 }

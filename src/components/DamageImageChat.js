@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Button, Input,Spin } from 'antd';
+import { Layout, Button, Input, Spin, Typography } from 'antd';
 import { UserOutlined, RobotOutlined, SendOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -112,6 +112,9 @@ const DamageImageChat = () => {
             </Button>
           ))}
         </div>
+        <Typography.Paragraph style={{ margin: '2px 0', textAlign: 'center',color: '#1C4E80' }}>
+          As an AI Agent, I am here to assist you with the analysis of damages. A few sample prompts have been provided above for your reference. Please feel free to enter your prompts directly in the box below.
+        </Typography.Paragraph>
         <div className="chat-messages">
           {messages.map((item, index) => (
             <div key={index} className={`message ${item.type}`}>
