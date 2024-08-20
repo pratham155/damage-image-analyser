@@ -48,8 +48,6 @@ jobs:
             --image ${{ env.DOCKER_IMAGE }} \
             --ingress internal-and-cloud-load-balancing \
             --session-affinity \
-            --vpc-egress "all" \
-            
             --port 80 \
             --allow-unauthenticated \
             --memory 1Gi \
