@@ -38,7 +38,7 @@ jobs:
         with:
           token_format: "access_token"
           workload_identity_provider: projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-d/providers/fulfilai-wkldid-pool-provider-d
-          service_account: ${{ env.SERVICE_ACCOUNT }}
+          service_account: fulfilai-gha-750864996575@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com 
 
       - name: Get Environmental Variables
         run: |
