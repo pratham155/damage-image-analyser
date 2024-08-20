@@ -1,11 +1,8 @@
 name: "Build and Push Docker Image"
 
 on:
-  # Triggers the workflow on push to the main branch
   push:
     branches: [main, develop]
-
-  # Enables this workflow to be manually triggered
   workflow_dispatch:
 
 jobs:
@@ -14,68 +11,63 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
 
-    # Add "id-token" with the intended permissions.
     permissions:
       contents: "read"
       id-token: "write"
 
     steps:
-      # Step 1: Checkout the code
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Step 2: Set account env variables based on branch
-      # - name: Set account env variables based on branch
-      #   id: set-env
-      #   run: |
-      #     if [[ main == ${{ github.ref_name }} ]]; then
-      #       echo ENVIRONMENT=prd >> $GITHUB_ENV
-      #       echo SERVICE_ACCOUNT=fulfilai-gha-485662822083@fulfilai-fulfillment-p-1-b6ad.iam.gserviceaccount.com >> $GITHUB_ENV
-      #       echo WORKLOAD_IDENTITY_PROVIDER=projects/485662822083/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
-      #     elif [[ develop == ${{ github.ref_name }} ]]; then
-      #       echo ENVIRONMENT=int >> $GITHUB_ENV
-      #       echo SERVICE_ACCOUNT=fulfilai-gha-750864996575@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com >> $GITHUB_ENV
-      #       echo WORKLOAD_IDENTITY_PROVIDER=projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-dev/providers/fulfilai-wkldid-pool-provider-dev >> $GITHUB_ENV
-      #     fi
+      - name: Set account env variables based on branch
+        id: set-env
+        run: |
+          if [[ main == ${{ github.ref_name }} ]]; then
+            echo ENVIRONMENT=prd >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-485662822083@fulfilai-fulfillment-p-1-b6ad.iam.gserviceaccount.com >> $GITHUB_ENV
+            echo WORKLOAD_IDENTITY_PROVIDER=projects/485662822083/locations/global/workloadIdentityPools/fulfilai-wkld-id-pool/providers/fulfilai-wkld-id-pool-provider >> $GITHUB_ENV
+          elif [[ develop == ${{ github.ref_name }} ]]; then
+            echo ENVIRONMENT=int >> $GITHUB_ENV
+            echo SERVICE_ACCOUNT=fulfilai-gha-750864996575@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com >> $GITHUB_ENV
+            echo WORKLOAD_IDENTITY_PROVIDER=projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-d/providers/fulfilai-wkldid-pool-provider-d >> $GITHUB_ENV
+          fi
 
-      # Step 3: Authenticate to Google Cloud
       - name: "Authenticate to Google Cloud"
         id: "auth"
         uses: "google-github-actions/auth@v1"
         with:
           token_format: "access_token"
-          workload_identity_provider: projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-d/providers/fulfilai-wkldid-pool-provider-d
-          service_account: fulfilai-gha-750864996575@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com 
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
 
-       # Add Debug Info step here
-      - name: Debug Info
-        run: env
-      # Step 6: Login to Docker
-      - uses: docker/login-action@v3
+      - name: Get Environmental Variables
+        run: |
+          if [[ main == ${{ github.ref_name }} ]]; then
+            echo DOCKER_TAGS=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository-use4/httpd-gar-img:latest >> $GITHUB_ENV
+          elif [[ develop == ${{ github.ref_name }} ]]; then
+            echo DOCKER_TAGS=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository-use4/httpd-gar-img:latest >> $GITHUB_ENV
+          fi
+      
+      # - name: Copy .env File
+      #   run: |
+      #     cp fulfilai-fulfillment-app/.env.${{ env.ENVIRONMENT }} fulfilai-fulfillment-app/.env
+      #     export $(cat fulfilai-fulfillment-app/.env | grep -v '^#' | xargs)
+      #     echo FULFILAI_BASE_API_URL=$FULFILAI_BASE_API_URL >> $GITHUB_ENV
+
+      - name: Login to Docker
+        uses: docker/login-action@v3
         with:
-          registry: "us-central1-docker.pkg.dev"
+          registry: us-central1-docker.pkg.dev
           username: "oauth2accesstoken"
           password: "${{ steps.auth.outputs.access_token }}"
 
-      - name: Log Tokens and Credentials
-        run: |
-          echo "Access Token: ${{ steps.auth.outputs.access_token }}"
-          echo "Service Account: ${{ env.SERVICE_ACCOUNT }}"
-          echo "Workload Identity Provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}"
-      
-
-      # Step 7: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 8: Build and push Docker image
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-custom-image:latest
-
-         
-          
+          tags: ${{ env.DOCKER_TAGS }}
