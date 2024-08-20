@@ -37,15 +37,15 @@ jobs:
         uses: "google-github-actions/auth@v1"
         with:
           token_format: "access_token"
-          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          workload_identity_provider: projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-d/providers/fulfilai-wkldid-pool-provider-d
           service_account: ${{ env.SERVICE_ACCOUNT }}
 
       - name: Get Environmental Variables
         run: |
           if [[ main == ${{ github.ref_name }} ]]; then
-            echo DOCKER_TAGS=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository-use4/httpd-gar-img:latest >> $GITHUB_ENV
+            echo DOCKER_TAGS=us-east4-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository-use4/httpd-gar-img:latest >> $GITHUB_ENV
           elif [[ develop == ${{ github.ref_name }} ]]; then
-            echo DOCKER_TAGS=us-central1-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository-use4/httpd-gar-img:latest >> $GITHUB_ENV
+            echo DOCKER_TAGS=us-east4-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository-use4/httpd-gar-img:latest >> $GITHUB_ENV
           fi
       
       # - name: Copy .env File
@@ -57,7 +57,7 @@ jobs:
       - name: Login to Docker
         uses: docker/login-action@v3
         with:
-          registry: us-central1-docker.pkg.dev
+          registry: "us-central1-docker.pkg.dev"
           username: "oauth2accesstoken"
           password: "${{ steps.auth.outputs.access_token }}"
 
