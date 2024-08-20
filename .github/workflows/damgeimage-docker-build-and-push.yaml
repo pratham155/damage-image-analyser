@@ -19,6 +19,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Authenticate to google cloud
+        uses: actions/checkout@v3
+
       - name: Set account env variables based on branch
         id: set-env
         run: |

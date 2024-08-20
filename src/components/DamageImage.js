@@ -24,7 +24,7 @@ const productTypes = [
 ];
 
 const DamageImage = () => {
-  const [productType, setProductType] = useState('null');
+  const [productType, setProductType] = useState('Dishwasher');
   const [damageTypes, setDamageTypes] = useState([]);
   const [severityTypes, setSeverityTypes] = useState([]);
   const [partDamaged, setPartDamaged] = useState([]);
