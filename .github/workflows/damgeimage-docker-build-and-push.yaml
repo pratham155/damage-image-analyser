@@ -53,7 +53,7 @@ jobs:
       - name: Login to Docker
         uses: docker/login-action@v3
         with:
-          registry: "us-central1-docker.pkg.dev"
+          registry: "us-east4-docker.pkg.dev"
           username: "oauth2accesstoken"
           password: "${{ steps.auth.outputs.access_token }}"
 
