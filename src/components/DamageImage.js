@@ -45,7 +45,7 @@ const DamageImage = () => {
       try {
         const headers = {
           'Content-Type': 'application/json',
-          'API-Key': 'f073d13164ce42a5a6ac3b5cfd39300277'
+          'API-Key': config.apiKey
         };
 
         const [partsResponse, damageResponse, severityResponse, modelsResponse] = await Promise.all([
@@ -88,7 +88,7 @@ const DamageImage = () => {
     try {
       const headers = {
         'Content-Type': 'application/json',
-        'API-Key': 'f073d13164ce42a5a6ac3b5cfd39300277'
+        'API-Key': config.apiKey
       };
 
       const params = {

@@ -1,6 +1,6 @@
 const config = {
-  BASE_URL: 'https://fulfillment-ai-dev.appl.ge.com/damage_assistant/',
-  apiKey: 'fca1885ea4d047f988b99c48f1da481488',
+  BASE_URL: 'https://fulfillment-ai-prd.appl.ge.com/damage_assistant/',
+  apiKey: 'c7c8168a382a42c497a25031841c115c99',
   };
   
   export default config;
