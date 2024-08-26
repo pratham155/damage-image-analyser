@@ -71,7 +71,8 @@ const DamageImageChat = () => {
         const response = await axios.get(config.BASE_URL, {
           headers: {
             'content-type': 'application/json',
-            'api-key': 'f073d13164ce42a5a6ac3b5cfd39300277'
+            'api-key': 'f073d13164ce42a5a6ac3b5cfd39300277 '
+
 
           },
           params: {
