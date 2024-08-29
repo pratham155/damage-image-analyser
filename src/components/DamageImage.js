@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, Divider, message } from 'antd';
+import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, message, Tooltip } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import config from './config';
 import './DamageImage.css';
 
@@ -29,10 +30,10 @@ const DamageImage = () => {
   const [severityTypes, setSeverityTypes] = useState([]);
   const [partDamaged, setPartDamaged] = useState([]);
   const [models, setModels] = useState([]);
-  const [damageType, setDamageType] = useState('null');
-  const [damageSeverity, setDamageSeverity] = useState('null');
-  const [partDamagedType, setPartDamagedType] = useState('null');
-  const [model, setModel] = useState('null');
+  const [damageType, setDamageType] = useState('All');
+  const [damageSeverity, setDamageSeverity] = useState('All');
+  const [partDamagedType, setPartDamagedType] = useState('All');
+  const [model, setModel] = useState('All');
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [imageList, setImageList] = useState([]);
@@ -79,11 +80,6 @@ const DamageImage = () => {
   }, []);
 
   const handleSearch = async () => {
-    if (productType === 'null' || damageType === 'null' || damageSeverity === 'null' || partDamagedType === 'null' || model === 'null' || !fromDate || !toDate) {
-      message.error('Please select all options');
-      return;
-    }
-
     setLoading(true);
     try {
       const headers = {
@@ -133,7 +129,10 @@ const DamageImage = () => {
       <Form layout="vertical">
         <Row gutter={16}>
           <Col span={4}>
-            <Form.Item label="Product Type">
+            <Form.Item 
+              label="Product Type" 
+              required
+            >
               <Select
                 value={productType}
                 onChange={(value) => setProductType(value)}
@@ -151,7 +150,7 @@ const DamageImage = () => {
                 value={damageType}
                 onChange={(value) => setDamageType(value)}
               >
-                <Option value="null">Select</Option>
+                <Option value="All">All</Option>
                 {damageTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
                 ))}
@@ -164,7 +163,7 @@ const DamageImage = () => {
                 value={damageSeverity}
                 onChange={(value) => setDamageSeverity(value)}
               >
-                <Option value="null">Select</Option>
+                <Option value="All">All</Option>
                 {severityTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
                 ))}
@@ -177,7 +176,7 @@ const DamageImage = () => {
                 value={partDamagedType}
                 onChange={(value) => setPartDamagedType(value)}
               >
-                <Option value="null">Select</Option>
+                <Option value="All">All</Option>
                 {partDamaged.map(part => (
                   <Option key={part} value={part}>{part}</Option>
                 ))}
@@ -190,7 +189,7 @@ const DamageImage = () => {
                 value={model}
                 onChange={(value) => setModel(value)}
               >
-                <Option value="null">Select</Option>
+                <Option value="All">All</Option>
                 {models.map(model => (
                   <Option key={model} value={model}>{model}</Option>
                 ))}
@@ -199,7 +198,16 @@ const DamageImage = () => {
           </Col>
           <Col span={4}>
             <ConfigProvider theme={{ token: { colorPrimary: '#1890ff', colorText: 'black' } }}>
-              <Form.Item label="Book Date Range">
+              <Form.Item
+                label={
+                  <span>
+                    Book Date Range{' '}
+                    <Tooltip title="Default date range is last 6 months">
+                      <InfoCircleOutlined style={{ color: '#1890ff', cursor: 'pointer' }} />
+                    </Tooltip>
+                  </span>
+                }
+              >
                 <RangePicker
                   value={fromDate && toDate ? [fromDate, toDate] : []}
                   onChange={(dates) => {
