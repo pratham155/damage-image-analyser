@@ -69,6 +69,6 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ env.DOCKER_TAGS }}
+          tags: us-east4-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository-use4/httpd-gar-img:latest
 
 
