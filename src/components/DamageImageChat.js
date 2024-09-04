@@ -5,7 +5,10 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import axios from 'axios';
 import './DamageImageChat.css';
-import config from './config';
+
+// Environment variables for BASE_URL and API_KEY
+const BASE_URL = process.env.REACT_APP_FULFIL_BASE_API_URL;
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -56,10 +59,10 @@ const DamageImageChat = () => {
 
     try {
       setLoading(true);
-      const response = await axios.get(config.BASE_URL, {
+      const response = await axios.get(BASE_URL, {
         headers: {
           'content-type': 'application/json',
-          'api-key': config.apiKey
+          'api-key': API_KEY
         },
         params: {
           dataset: 'search',
@@ -94,10 +97,10 @@ const DamageImageChat = () => {
 
       try {
         setLoading(true);
-        const response = await axios.get(config.BASE_URL, {
+        const response = await axios.get(BASE_URL, {
           headers: {
             'content-type': 'application/json',
-            'api-key': config.apiKey
+            'api-key': API_KEY
           },
           params: {
             dataset: 'search',
