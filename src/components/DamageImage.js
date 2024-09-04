@@ -241,7 +241,7 @@ const DamageImage = () => {
               dataSource={imageList}
               renderItem={item => (
                 <List.Item onClick={() => handleItemClick(item)} className="list-item">
-                  <Typography.Text mark>[IMAGE]</Typography.Text> {item.title}
+                  <Typography.Text mark></Typography.Text> {item.title}
                 </List.Item>
               )}
             />
