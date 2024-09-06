@@ -107,7 +107,7 @@ const DamageImage = () => {
 
       const data = await response.json();
       setImageList(data.data.images || []);
-      setSelectedImage(null); // Clear the selected image
+      setSelectedImage(null);
     } catch (error) {
       console.error('Error fetching images:', error);
     } finally {
@@ -184,17 +184,25 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
           <Col span={4}>
-            <Form.Item label="Model">
-              <Select
-                value={model}
-                onChange={(value) => setModel(value)}
-              >
-                <Option value="All">All</Option>
-                {models.map(model => (
-                  <Option key={model} value={model}>{model}</Option>
-                ))}
-              </Select>
-            </Form.Item>
+          <Form.Item label="Model">
+  <Select
+    showSearch
+    value={model}
+    onChange={(value) => setModel(value)}
+    filterOption={(input, option) =>
+      option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+    }
+    placeholder="Search Model"
+  >
+    <Option value="All">All</Option>
+    {models.map(model => (
+      <Option key={model} value={model}>{model}</Option>
+    ))}
+  </Select>
+</Form.Item>
+
+
+
           </Col>
           <Col span={4}>
             <ConfigProvider theme={{ token: { colorPrimary: '#1890ff', colorText: 'black' } }}>
