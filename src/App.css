@@ -1,20 +1,20 @@
 body {
   font-family: 'Roboto', sans-serif !important;
-  color: #333333; /* Dark Grey for text */
-  background-color: #FFFFFF; /* White background */
+  color: #333333; 
+  background-color: #FFFFFF; 
   margin: 0;
   padding: 0;
-  height: 100%; /* Ensure body takes full height */
-  overflow: hidden; /* Prevents the default scrollbar */
+  height: 100%; 
+  overflow: hidden; 
 }
 
 .custom-header {
   display: flex;
   align-items: center;
-  background-color: #1C4E80; /* Deep Purple for header */
+  background-color: #1C4E80; 
   padding: 0 20px;
-  border-bottom: 4px solid #1C4E80; /* Slightly darker shade of Deep Purple for bottom border */
-  color: #FFFFFF; /* White font color */
+  border-bottom: 4px solid #1C4E80; 
+  color: #FFFFFF; 
 }
 
 .logo img {
@@ -26,7 +26,7 @@ body {
 .logo {
   display: flex;
   align-items: center;
-  margin-right: 20px; /* Adjust as needed to align properly */
+  margin-right: 20px; 
 }
 
 
@@ -34,30 +34,30 @@ body {
   display: flex;
   align-items: center;
   margin-left: auto;
-  color: #FFFFFF; /* White font color for user profile items */
+  color: #FFFFFF; 
 }
 
 .ant-menu-dark .ant-menu-item-selected {
-  background-color: #CED2CC !important; /* Vibrant Pink for selected item */
-  color: black !important; /* White font color for selected item */
+  background-color: #CED2CC !important; 
+  color: black !important; 
 }
 
 /* .ant-menu-dark .ant-menu-item:hover {
-  background-color: #FF1493 !important; /* Vibrant Pink for hover */
-  /* color: black !important; /* White font color for hover state */
+  background-color: #FF1493 !important; 
+  /* color: black !important; 
 /* } */ 
 
 .ant-menu-dark {
-  background-color: #1C4E80; /* Deep Purple to match header */
+  background-color: #1C4E80; 
 }
 
 .ant-layout-content {
-  background-color: #FFFFFF; /* White background for content area */
+  background-color: #FFFFFF; 
   padding: 0 5px;
   border-radius: 8px;
   /* margin: 20px; */
   flex: 1;
-  overflow: hidden; /* Prevent inner scrolling */
+  overflow: hidden; 
 }
 
 .login-container {
@@ -70,11 +70,11 @@ body {
 .login-form {
   width: 300px;
   padding: 24px;
-  background: #FFFFFF; /* White background for the form */
+  background: #FFFFFF; 
   border-radius: 8px;
 }
 
-/* Styling for the Send button */
+
 .send-button {
   display: flex;
   justify-content: flex-end;
@@ -82,12 +82,12 @@ body {
 }
 
 .send-button .ant-btn {
-  background-color: #1C4E80; /* Deep Purple for the Send button */
+  background-color: #1C4E80; 
   border-color: #1C4E80;
 }
 
 .send-button .ant-btn:hover {
-  background-color: #1C4E80; /* Slightly darker Deep Purple on hover */
+  background-color: #1C4E80; 
   border-color: #1C4E80;
 }
 

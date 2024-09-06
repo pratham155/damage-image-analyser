@@ -19,7 +19,7 @@ body, html, #root {
     flex-direction: column;
     padding: 20px;
     flex: 1;
-    overflow: hidden; /* Prevent scrolling */
+    overflow: hidden; 
   }
   
   .question-buttons {
@@ -31,9 +31,9 @@ body, html, #root {
   }
   
   .question-button {
-    width: 220px; /* Adjust width as needed */
+    width: 220px; 
     height: auto;
-    padding: 10px; /* Add padding for spacing */
+    padding: 10px; 
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -131,7 +131,7 @@ body, html, #root {
   }
   
   th, td {
-    border: 1px solid #ddd; /* Add borders to table cells */
+    border: 1px solid #ddd; 
     padding: 8px;
   }
   
@@ -140,7 +140,3 @@ body, html, #root {
     text-align: left;
   }
   
-  /* tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-   */

@@ -107,7 +107,7 @@ const DamageImage = () => {
 
       const data = await response.json();
       setImageList(data.data.images || []);
-      setSelectedImage(null); // Clear the selected image
+      setSelectedImage(null); 
     } catch (error) {
       console.error('Error fetching images:', error);
     } finally {
