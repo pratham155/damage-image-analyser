@@ -13,7 +13,7 @@ const { TextArea } = Input;
 const predefinedQuestions = [
   "Provide a summary by damage type for dishwasher",
   "Provide a summary by part damage for dishwasher",
-  "Provide a summary by damage sensitivity for dishwasher",
+  "Provide a summary by damage Severity for dishwasher",
   "Which models have the most damage"
 ];
 
