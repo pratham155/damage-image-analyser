@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, message, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import config from './config';
 import './DamageImage.css';
-import config from './config'; 
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -46,11 +46,11 @@ const DamageImage = () => {
       try {
         const headers = {
           'Content-Type': 'application/json',
-          'API-Key': config.apiKey 
+          'API-Key': config.apiKey
         };
 
         const [partsResponse, damageResponse, severityResponse, modelsResponse] = await Promise.all([
-          fetch(`${config.BASE_URL}?dataset=getPartsDamaged`, { headers }), 
+          fetch(`${config.BASE_URL}?dataset=getPartsDamaged`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getDamageTypes`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getSeverityTypes`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getModels`, { headers })
@@ -107,7 +107,7 @@ const DamageImage = () => {
 
       const data = await response.json();
       setImageList(data.data.images || []);
-      setSelectedImage(null); 
+      setSelectedImage(null);
     } catch (error) {
       console.error('Error fetching images:', error);
     } finally {
@@ -129,11 +129,15 @@ const DamageImage = () => {
       <Form layout="vertical">
         <Row gutter={16}>
           <Col span={4}>
-            <Form.Item label="Product Type" required>
+            <Form.Item 
+              label="Product Type" 
+              required
+            >
               <Select
                 value={productType}
                 onChange={(value) => setProductType(value)}
               >
+                <Option value="null">Select</Option>
                 {productTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
                 ))}
@@ -180,17 +184,25 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
           <Col span={4}>
-            <Form.Item label="Model">
-              <Select
-                value={model}
-                onChange={(value) => setModel(value)}
-              >
-                <Option value="All">All</Option>
-                {models.map(model => (
-                  <Option key={model} value={model}>{model}</Option>
-                ))}
-              </Select>
-            </Form.Item>
+          <Form.Item label="Model">
+  <Select
+    showSearch
+    value={model}
+    onChange={(value) => setModel(value)}
+    filterOption={(input, option) =>
+      option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+    }
+    placeholder="Search Model"
+  >
+    <Option value="All">All</Option>
+    {models.map(model => (
+      <Option key={model} value={model}>{model}</Option>
+    ))}
+  </Select>
+</Form.Item>
+
+
+
           </Col>
           <Col span={4}>
             <ConfigProvider theme={{ token: { colorPrimary: '#1890ff', colorText: 'black' } }}>
