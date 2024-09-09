@@ -115,7 +115,7 @@ const DamageImage = () => {
 
       const data = await response.json();
       setImageList(data.data.images || []);
-      setSelectedImage(null); // Clear the selected image
+      setSelectedImage(null); 
     } catch (error) {
       console.error('Error fetching images:', error);
     } finally {
@@ -245,7 +245,7 @@ const DamageImage = () => {
               dataSource={imageList}
               renderItem={item => (
                 <List.Item onClick={() => handleItemClick(item)} className="list-item">
-                  <Typography.Text mark>[IMAGE]</Typography.Text> {item.title}
+                  <Typography.Text mark></Typography.Text> {item.title}
                 </List.Item>
               )}
             />

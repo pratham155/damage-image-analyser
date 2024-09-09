@@ -5,7 +5,7 @@ import { PictureOutlined, MessageOutlined, UserOutlined } from '@ant-design/icon
 import LoginForm from './components/LoginForm';
 import DamageImage from './components/DamageImage';
 import DamageImageChat from './components/DamageImageChat';
-import './App.css'; // Import custom styles
+import './App.css'; 
 
 const { Header, Content } = Layout;
 
