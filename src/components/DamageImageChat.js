@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 import axios from 'axios';
 import './DamageImageChat.css';
 
-// Environment variables for BASE_URL and API_KEY
+
 const BASE_URL = process.env.REACT_APP_FULFIL_BASE_API_URL;
 const API_KEY = process.env.REACT_APP_API_KEY;
 
@@ -20,7 +20,7 @@ const predefinedQuestions = [
   "Which models have the most damage"
 ];
 
-// Memoized Message Component
+
 const Message = memo(({ type, text }) => (
   <div className={`message ${type}`}>
     {type === 'question' ? <UserOutlined className="message-icon" /> : <RobotOutlined className="message-icon" />}
@@ -30,7 +30,7 @@ const Message = memo(({ type, text }) => (
   </div>
 ));
 
-// Memoized Message List Component
+
 const MessageList = memo(({ messages, loading }) => (
   <div className="chat-messages">
     {messages.map((item, index) => (
@@ -93,7 +93,7 @@ const DamageImageChat = () => {
         ...prevMessages,
         { type: 'question', text: currentInput }
       ]);
-      setInput(''); // Clear input immediately for better UX
+      setInput(''); 
 
       try {
         setLoading(true);

@@ -40,7 +40,7 @@ const DamageImage = () => {
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
 
-  // Fetch environment variables from the .env.int file
+  
   const BASE_URL = process.env.REACT_APP_FULFIL_BASE_API_URL;
   const apiKey = process.env.REACT_APP_API_KEY;
 
