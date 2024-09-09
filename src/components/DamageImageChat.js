@@ -4,8 +4,8 @@ import { UserOutlined, RobotOutlined, SendOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import axios from 'axios';
+import config from './config';
 import './DamageImageChat.css';
-import config from './config';  // Import config.js
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -13,10 +13,11 @@ const { TextArea } = Input;
 const predefinedQuestions = [
   "Provide a summary by damage type for dishwasher",
   "Provide a summary by part damage for dishwasher",
-  "Provide a summary by damage Severity for dishwasher",
+  "Provide a summary by damage sensitivity for dishwasher",
   "Which models have the most damage"
 ];
 
+// Memoized message component to avoid re-rendering unnecessarily
 const Message = memo(({ type, text }) => (
   <div className={`message ${type}`}>
     {type === 'question' ? <UserOutlined className="message-icon" /> : <RobotOutlined className="message-icon" />}
@@ -26,6 +27,7 @@ const Message = memo(({ type, text }) => (
   </div>
 ));
 
+// Memoized message list component to optimize rendering
 const MessageList = memo(({ messages, loading }) => (
   <div className="chat-messages">
     {messages.map((item, index) => (
@@ -44,9 +46,9 @@ const DamageImageChat = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Memoized function to handle predefined question clicks
   const handleQuestionClick = useCallback(async (index) => {
     const question = predefinedQuestions[index];
-
     setMessages(prevMessages => [
       ...prevMessages,
       { type: 'question', text: question }
@@ -54,10 +56,10 @@ const DamageImageChat = () => {
 
     try {
       setLoading(true);
-      const response = await axios.get(config.BASE_URL, {  // Using config.BASE_URL
+      const response = await axios.get(config.BASE_URL, {
         headers: {
           'content-type': 'application/json',
-          'api-key': config.API_KEY  // Using config.API_KEY
+          'api-key': config.apiKey
         },
         params: {
           dataset: 'search',
@@ -81,6 +83,7 @@ const DamageImageChat = () => {
     }
   }, []);
 
+  // Memoized function to handle sending of user input
   const handleSend = useCallback(async () => {
     if (input.trim()) {
       const currentInput = input.trim();
@@ -88,14 +91,15 @@ const DamageImageChat = () => {
         ...prevMessages,
         { type: 'question', text: currentInput }
       ]);
-      setInput(''); 
+
+      setInput(''); // Clear input for a better user experience
 
       try {
         setLoading(true);
-        const response = await axios.get(config.BASE_URL, {  // Using config.BASE_URL
+        const response = await axios.get(config.BASE_URL, {
           headers: {
             'content-type': 'application/json',
-            'api-key': config.API_KEY  // Using config.API_KEY
+            'api-key': config.apiKey
           },
           params: {
             dataset: 'search',
@@ -120,6 +124,7 @@ const DamageImageChat = () => {
     }
   }, [input]);
 
+  // Memoized input change handler to avoid re-rendering
   const handleInputChange = useCallback((e) => {
     setInput(e.target.value);
   }, []);
