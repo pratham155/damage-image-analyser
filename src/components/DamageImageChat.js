@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Layout, Button, Input, Spin, Typography } from 'antd';
 import { UserOutlined, RobotOutlined, SendOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import axios from 'axios';
 import './DamageImageChat.css';
-import config from './config';
+
+// Environment variables for BASE_URL and API_KEY
+const BASE_URL = process.env.REACT_APP_FULFIL_BASE_API_URL;
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -13,16 +16,40 @@ const { TextArea } = Input;
 const predefinedQuestions = [
   "Provide a summary by damage type for dishwasher",
   "Provide a summary by part damage for dishwasher",
-  "Provide a summary by damage sensitivity for dishwasher",
+  "Provide a summary by damage Severity for dishwasher",
   "Which models have the most damage"
 ];
+
+// Memoized Message Component
+const Message = memo(({ type, text }) => (
+  <div className={`message ${type}`}>
+    {type === 'question' ? <UserOutlined className="message-icon" /> : <RobotOutlined className="message-icon" />}
+    <div className="message-content">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+    </div>
+  </div>
+));
+
+// Memoized Message List Component
+const MessageList = memo(({ messages, loading }) => (
+  <div className="chat-messages">
+    {messages.map((item, index) => (
+      <Message key={index} type={item.type} text={item.text} />
+    ))}
+    {loading && (
+      <div className="loading-spinner">
+        <Spin size="large" />
+      </div>
+    )}
+  </div>
+));
 
 const DamageImageChat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleQuestionClick = async (index) => {
+  const handleQuestionClick = useCallback(async (index) => {
     const question = predefinedQuestions[index];
 
     setMessages(prevMessages => [
@@ -32,10 +59,10 @@ const DamageImageChat = () => {
 
     try {
       setLoading(true);
-      const response = await axios.get(config.BASE_URL, {
+      const response = await axios.get(BASE_URL, {
         headers: {
           'content-type': 'application/json',
-          'api-key': config.apiKey
+          'api-key': API_KEY
         },
         params: {
           dataset: 'search',
@@ -57,27 +84,27 @@ const DamageImageChat = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleSend = async () => {
+  const handleSend = useCallback(async () => {
     if (input.trim()) {
+      const currentInput = input.trim();
       setMessages(prevMessages => [
         ...prevMessages,
-        { type: 'question', text: input }
+        { type: 'question', text: currentInput }
       ]);
+      setInput(''); // Clear input immediately for better UX
 
       try {
         setLoading(true);
-        const response = await axios.get(config.BASE_URL, {
+        const response = await axios.get(BASE_URL, {
           headers: {
             'content-type': 'application/json',
-            'api-key': config.apiKey
-
-
+            'api-key': API_KEY
           },
           params: {
             dataset: 'search',
-            prompt: input
+            prompt: currentInput
           }
         });
 
@@ -95,10 +122,12 @@ const DamageImageChat = () => {
       } finally {
         setLoading(false);
       }
-
-      setInput('');
     }
-  };
+  }, [input]);
+
+  const handleInputChange = useCallback((e) => {
+    setInput(e.target.value);
+  }, []);
 
   return (
     <Layout className="chat-layout">
@@ -114,31 +143,17 @@ const DamageImageChat = () => {
             </Button>
           ))}
         </div>
-        <Typography.Paragraph style={{ margin: '2px 0', textAlign: 'center',color: '#1C4E80' }}>
+        <Typography.Paragraph style={{ margin: '2px 0', textAlign: 'center', color: '#1C4E80' }}>
           As an AI Agent, I am here to assist you with the analysis of damages. A few sample prompts have been provided above for your reference. Please feel free to enter your prompts directly in the box below.
         </Typography.Paragraph>
-        <div className="chat-messages">
-          {messages.map((item, index) => (
-            <div key={index} className={`message ${item.type}`}>
-              {item.type === 'question' ? <UserOutlined className="message-icon" /> : <RobotOutlined className="message-icon" />}
-              <div className="message-content">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.text}</ReactMarkdown>
-              </div>
-            </div>
-          ))}
-          {loading && (
-            <div className="loading-spinner">
-              <Spin size="large" />
-            </div>
-          )}
-        </div>
+        <MessageList messages={messages} loading={loading} />
         <div className="chat-input">
           <TextArea
             rows={2}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleInputChange}
             placeholder="Enter your question..."
-            onPressEnter={handleSend}
+            onPressEnter={(e) => { e.preventDefault(); handleSend(); }}
             disabled={loading}
           />
           <Button type="primary" onClick={handleSend} disabled={loading} icon={<SendOutlined />} />
