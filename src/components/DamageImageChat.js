@@ -5,10 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import axios from 'axios';
 import './DamageImageChat.css';
-
-
-const BASE_URL = process.env.REACT_APP_FULFIL_BASE_API_URL;
-const API_KEY = process.env.REACT_APP_API_KEY;
+import config from './config';  // Import config.js
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -20,7 +17,6 @@ const predefinedQuestions = [
   "Which models have the most damage"
 ];
 
-
 const Message = memo(({ type, text }) => (
   <div className={`message ${type}`}>
     {type === 'question' ? <UserOutlined className="message-icon" /> : <RobotOutlined className="message-icon" />}
@@ -29,7 +25,6 @@ const Message = memo(({ type, text }) => (
     </div>
   </div>
 ));
-
 
 const MessageList = memo(({ messages, loading }) => (
   <div className="chat-messages">
@@ -59,10 +54,10 @@ const DamageImageChat = () => {
 
     try {
       setLoading(true);
-      const response = await axios.get(BASE_URL, {
+      const response = await axios.get(config.BASE_URL, {  // Using config.BASE_URL
         headers: {
           'content-type': 'application/json',
-          'api-key': API_KEY
+          'api-key': config.API_KEY  // Using config.API_KEY
         },
         params: {
           dataset: 'search',
@@ -97,10 +92,10 @@ const DamageImageChat = () => {
 
       try {
         setLoading(true);
-        const response = await axios.get(BASE_URL, {
+        const response = await axios.get(config.BASE_URL, {  // Using config.BASE_URL
           headers: {
             'content-type': 'application/json',
-            'api-key': API_KEY
+            'api-key': config.API_KEY  // Using config.API_KEY
           },
           params: {
             dataset: 'search',

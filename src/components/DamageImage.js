@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, message, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import './DamageImage.css';
+import config from './config'; 
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -40,28 +41,19 @@ const DamageImage = () => {
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
 
-  
-  const BASE_URL = process.env.REACT_APP_FULFIL_BASE_API_URL;
-  const apiKey = process.env.REACT_APP_API_KEY;
-
   useEffect(() => {
-    if (!BASE_URL || !apiKey) {
-      console.error("Missing environment variables: NEXT_PUBLIC_FULFIL_BASE_API_URL or NEXT_PUBLIC_API_KEY");
-      return;
-    }
-
     const fetchData = async () => {
       try {
         const headers = {
           'Content-Type': 'application/json',
-          'API-Key': apiKey
+          'API-Key': config.apiKey 
         };
 
         const [partsResponse, damageResponse, severityResponse, modelsResponse] = await Promise.all([
-          fetch(`${BASE_URL}?dataset=getPartsDamaged`, { headers }),
-          fetch(`${BASE_URL}?dataset=getDamageTypes`, { headers }),
-          fetch(`${BASE_URL}?dataset=getSeverityTypes`, { headers }),
-          fetch(`${BASE_URL}?dataset=getModels`, { headers })
+          fetch(`${config.BASE_URL}?dataset=getPartsDamaged`, { headers }), 
+          fetch(`${config.BASE_URL}?dataset=getDamageTypes`, { headers }),
+          fetch(`${config.BASE_URL}?dataset=getSeverityTypes`, { headers }),
+          fetch(`${config.BASE_URL}?dataset=getModels`, { headers })
         ]);
 
         if (!partsResponse.ok || !damageResponse.ok || !severityResponse.ok || !modelsResponse.ok) {
@@ -85,14 +77,14 @@ const DamageImage = () => {
     };
 
     fetchData();
-  }, [BASE_URL, apiKey]);
+  }, []);
 
   const handleSearch = async () => {
     setLoading(true);
     try {
       const headers = {
         'Content-Type': 'application/json',
-        'API-Key': apiKey
+        'API-Key': config.apiKey
       };
 
       const params = {
@@ -107,7 +99,7 @@ const DamageImage = () => {
       };
 
       const query = new URLSearchParams(params).toString();
-      const response = await fetch(`${BASE_URL}?${query}`, { headers });
+      const response = await fetch(`${config.BASE_URL}?${query}`, { headers });
 
       if (!response.ok) {
         throw new Error('Failed to fetch images');
