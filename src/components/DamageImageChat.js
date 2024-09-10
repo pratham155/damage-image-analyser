@@ -175,7 +175,7 @@ const DamageImageChat = () => {
         </div>
         
         <Typography.Paragraph style={{ margin: '2px 0', textAlign: 'center', color: '#1C4E80' }}>
-          Data is not inclusive of all damage returns for the product line and manufacturing site. It is currently limited to returns from BG&I, NECO, and Contract customers and to entries that include legible damage photos.
+         Disclaimer: Data is not inclusive of all damage returns for the product line and manufacturing site. It is currently limited to returns from BG&I, NECO, and Contract customers and to entries that include legible damage photos.
         </Typography.Paragraph>
       </Content>
     </Layout>
