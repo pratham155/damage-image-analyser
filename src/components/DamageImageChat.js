@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
 import { Layout, Button, Input, Spin, Typography } from 'antd';
 import { UserOutlined, RobotOutlined, SendOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
@@ -17,7 +17,7 @@ const predefinedQuestions = [
   "Which models have the most damage"
 ];
 
-// Memoized message component to avoid re-rendering unnecessarily
+
 const Message = memo(({ type, text }) => (
   <div className={`message ${type}`}>
     {type === 'question' ? <UserOutlined className="message-icon" /> : <RobotOutlined className="message-icon" />}
@@ -27,26 +27,42 @@ const Message = memo(({ type, text }) => (
   </div>
 ));
 
-// Memoized message list component to optimize rendering
-const MessageList = memo(({ messages, loading }) => (
-  <div className="chat-messages">
-    {messages.map((item, index) => (
-      <Message key={index} type={item.type} text={item.text} />
-    ))}
-    {loading && (
-      <div className="loading-spinner">
-        <Spin size="large" />
-      </div>
-    )}
-  </div>
-));
+
+const MessageList = memo(({ messages, loading }) => {
+  const messagesEndRef = useRef(null);
+
+  
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  return (
+    <div className="chat-messages">
+      {messages.map((item, index) => (
+        <Message key={index} type={item.type} text={item.text} />
+      ))}
+      {loading && (
+        <div className="loading-spinner">
+          <Spin size="large" />
+        </div>
+      )}
+      
+      <div ref={messagesEndRef} />
+    </div>
+  );
+});
 
 const DamageImageChat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Memoized function to handle predefined question clicks
   const handleQuestionClick = useCallback(async (index) => {
     const question = predefinedQuestions[index];
     setMessages(prevMessages => [
@@ -83,7 +99,6 @@ const DamageImageChat = () => {
     }
   }, []);
 
-  // Memoized function to handle sending of user input
   const handleSend = useCallback(async () => {
     if (input.trim()) {
       const currentInput = input.trim();
@@ -92,7 +107,7 @@ const DamageImageChat = () => {
         { type: 'question', text: currentInput }
       ]);
 
-      setInput(''); // Clear input for a better user experience
+      setInput(''); 
 
       try {
         setLoading(true);
@@ -124,7 +139,7 @@ const DamageImageChat = () => {
     }
   }, [input]);
 
-  // Memoized input change handler to avoid re-rendering
+  
   const handleInputChange = useCallback((e) => {
     setInput(e.target.value);
   }, []);
@@ -158,6 +173,10 @@ const DamageImageChat = () => {
           />
           <Button type="primary" onClick={handleSend} disabled={loading} icon={<SendOutlined />} />
         </div>
+        
+        <Typography.Paragraph style={{ margin: '2px 0', textAlign: 'center', color: '#1C4E80' }}>
+          Data is not inclusive of all damage returns for the product line and manufacturing site. It is currently limited to returns from BG&I, NECO, and Contract customers and to entries that include legible damage photos.
+        </Typography.Paragraph>
       </Content>
     </Layout>
   );
