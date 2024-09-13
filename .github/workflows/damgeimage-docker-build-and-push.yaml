@@ -40,8 +40,8 @@ jobs:
         uses: "google-github-actions/auth@v1"
         with:
           token_format: "access_token"
-          workload_identity_provider: projects/750864996575/locations/global/workloadIdentityPools/fulfilai-wkldid-pool-d/providers/fulfilai-wkldid-pool-provider-d
-          service_account: fulfilai-gha-750864996575@fulfilai-fulfillment-d-1-5d7f.iam.gserviceaccount.com 
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
 
       - name: Get Environmental Variables
         run: |
@@ -69,6 +69,5 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: us-east4-docker.pkg.dev/fulfilai-fulfillment-d-1-5d7f/fulfilai-docker-repository-use4/httpd-gar-img:latest
-
+          tags: ${{ env.DOCKER_TAGS }}
 
