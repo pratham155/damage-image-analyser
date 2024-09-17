@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, message, Tooltip } from 'antd';
+import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import config from './config';
 import './DamageImage.css';
@@ -40,6 +40,7 @@ const DamageImage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
+  const [showImageInfo, setShowImageInfo] = useState(false); // Control visibility of info
 
   useEffect(() => {
     const fetchData = async () => {
@@ -117,7 +118,12 @@ const DamageImage = () => {
 
   const handleItemClick = (image) => {
     setSelectedImage(image);
+    setShowImageInfo(false); // Initially hide info
     setImageLoading(true);
+  };
+
+  const handleImageClick = () => {
+    setShowImageInfo(true); // Show info when image is clicked
   };
 
   const handleImageLoad = () => {
@@ -129,14 +135,8 @@ const DamageImage = () => {
       <Form layout="vertical">
         <Row gutter={16}>
           <Col span={4}>
-            <Form.Item 
-              label="Product Type" 
-              required
-            >
-              <Select
-                value={productType}
-                onChange={(value) => setProductType(value)}
-              >
+            <Form.Item label="Product Type" required>
+              <Select value={productType} onChange={(value) => setProductType(value)}>
                 <Option value="null">Select</Option>
                 {productTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
@@ -146,10 +146,7 @@ const DamageImage = () => {
           </Col>
           <Col span={4}>
             <Form.Item label="Damage Type">
-              <Select
-                value={damageType}
-                onChange={(value) => setDamageType(value)}
-              >
+              <Select value={damageType} onChange={(value) => setDamageType(value)}>
                 <Option value="All">All</Option>
                 {damageTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
@@ -159,10 +156,7 @@ const DamageImage = () => {
           </Col>
           <Col span={4}>
             <Form.Item label="Damage Severity">
-              <Select
-                value={damageSeverity}
-                onChange={(value) => setDamageSeverity(value)}
-              >
+              <Select value={damageSeverity} onChange={(value) => setDamageSeverity(value)}>
                 <Option value="All">All</Option>
                 {severityTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
@@ -172,10 +166,7 @@ const DamageImage = () => {
           </Col>
           <Col span={4}>
             <Form.Item label="Part Damaged">
-              <Select
-                value={partDamagedType}
-                onChange={(value) => setPartDamagedType(value)}
-              >
+              <Select value={partDamagedType} onChange={(value) => setPartDamagedType(value)}>
                 <Option value="All">All</Option>
                 {partDamaged.map(part => (
                   <Option key={part} value={part}>{part}</Option>
@@ -184,25 +175,22 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
           <Col span={4}>
-          <Form.Item label="Model">
-  <Select
-    showSearch
-    value={model}
-    onChange={(value) => setModel(value)}
-    filterOption={(input, option) =>
-      option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-    }
-    placeholder="Search Model"
-  >
-    <Option value="All">All</Option>
-    {models.map(model => (
-      <Option key={model} value={model}>{model}</Option>
-    ))}
-  </Select>
-</Form.Item>
-
-
-
+            <Form.Item label="Model">
+              <Select
+                showSearch
+                value={model}
+                onChange={(value) => setModel(value)}
+                filterOption={(input, option) =>
+                  option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
+                placeholder="Search Model"
+              >
+                <Option value="All">All</Option>
+                {models.map(model => (
+                  <Option key={model} value={model}>{model}</Option>
+                ))}
+              </Select>
+            </Form.Item>
           </Col>
           <Col span={4}>
             <ConfigProvider theme={{ token: { colorPrimary: '#1890ff', colorText: 'black' } }}>
@@ -254,17 +242,28 @@ const DamageImage = () => {
               )}
             />
           </div>
-          <div className="selected-image-container">
+          <div className="selected-image-container" style={{ display: 'flex', alignItems: 'flex-start' }}>
             {imageLoading && (
               <div className="loading-spinner">
                 <Spin size="large" />
               </div>
             )}
             {selectedImage && (
-              <div className="selected-image">
-                <h2>{selectedImage.title}</h2>
-                <img src={selectedImage.path} alt={selectedImage.title} onLoad={handleImageLoad} />
-              </div>
+              <>
+                <div className="selected-image" onClick={handleImageClick}>
+                  {/* Display the image title above the image */}
+                  <h2 className="image-title">{selectedImage.title}</h2>
+                  <img src={selectedImage.path} alt={selectedImage.title} onLoad={handleImageLoad} />
+                </div>
+                {/* Display info only when image is clicked */}
+                {showImageInfo && (
+                  <div className="image-info" style={{ marginLeft: '20px' }}>
+                    <p><strong>Damage:</strong> Scratch</p>
+                    <p><strong>Severity:</strong> Moderate</p>
+                    <p><strong>Product Type:</strong> Dishwasher</p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
