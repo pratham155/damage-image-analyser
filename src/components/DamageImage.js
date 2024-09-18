@@ -258,9 +258,9 @@ const DamageImage = () => {
                 {/* Display info only when image is clicked */}
                 {showImageInfo && (
                   <div className="image-info" style={{ marginLeft: '20px' }}>
-                    <p><strong>Damage:</strong> Scratch</p>
-                    <p><strong>Severity:</strong> Moderate</p>
-                    <p><strong>Product Type:</strong> Dishwasher</p>
+                    <p><strong>Damage Type:</strong> {selectedImage.damageType}</p>
+                    <p><strong>Severity:</strong> {selectedImage.severity}</p>
+                    <p><strong>Part Damaged:</strong> {selectedImage.partDamaged}</p>
                   </div>
                 )}
               </>
