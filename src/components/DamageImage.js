@@ -40,7 +40,7 @@ const DamageImage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
-  const [showImageInfo, setShowImageInfo] = useState(false); // Control visibility of info
+  const [showImageInfo, setShowImageInfo] = useState(false); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,6 +109,7 @@ const DamageImage = () => {
       const data = await response.json();
       setImageList(data.data.images || []);
       setSelectedImage(null);
+      setShowImageInfo(false); 
     } catch (error) {
       console.error('Error fetching images:', error);
     } finally {
@@ -118,16 +119,13 @@ const DamageImage = () => {
 
   const handleItemClick = (image) => {
     setSelectedImage(image);
-    setShowImageInfo(false); // Initially hide info
     setImageLoading(true);
-  };
-
-  const handleImageClick = () => {
-    setShowImageInfo(true); // Show info when image is clicked
+    setShowImageInfo(false); 
   };
 
   const handleImageLoad = () => {
     setImageLoading(false);
+    setShowImageInfo(true); 
   };
 
   return (
@@ -250,12 +248,11 @@ const DamageImage = () => {
             )}
             {selectedImage && (
               <>
-                <div className="selected-image" onClick={handleImageClick}>
-                  {/* Display the image title above the image */}
+                <div className="selected-image">
                   <h2 className="image-title">{selectedImage.title}</h2>
                   <img src={selectedImage.path} alt={selectedImage.title} onLoad={handleImageLoad} />
                 </div>
-                {/* Display info only when image is clicked */}
+                
                 {showImageInfo && (
                   <div className="image-info" style={{ marginLeft: '20px' }}>
                     <p><strong>Damage Type:</strong> {selectedImage.damageType}</p>
