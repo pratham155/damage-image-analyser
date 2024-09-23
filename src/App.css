@@ -102,3 +102,27 @@ body {
   flex: 1;
   margin-right: 10px;
 }
+/* Vertical column style for the feedback button */
+.feedback-button {
+  position: fixed;
+  left: 0; /* Change from right to left */
+  top: 45%;
+  width: 25px; /* Adjust width for vertical button */
+  height: auto;
+  background-color: #1C4E80;
+  color: white;
+  writing-mode: vertical-rl; /* Makes text vertical */
+  text-orientation: mixed; /* Ensures the text is readable vertically */
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 0 5px 5px 0; /* Change the border radius to fit the left side */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+
+.feedback-button:hover {
+  background-color: #143A5B;
+  padding-right: 5px;
+}

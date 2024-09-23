@@ -24,12 +24,17 @@ const productTypes = [
   "Water Softener"
 ];
 
+const factoryTypes = [
+  "AP3",
+];
+
 const DamageImage = () => {
   const [productType, setProductType] = useState('Dishwasher');
   const [damageTypes, setDamageTypes] = useState([]);
   const [severityTypes, setSeverityTypes] = useState([]);
   const [partDamaged, setPartDamaged] = useState([]);
   const [models, setModels] = useState([]);
+  const [factory, setFactory] = useState('All');
   const [damageType, setDamageType] = useState('All');
   const [damageSeverity, setDamageSeverity] = useState('All');
   const [partDamagedType, setPartDamagedType] = useState('All');
@@ -40,7 +45,7 @@ const DamageImage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
-  const [showImageInfo, setShowImageInfo] = useState(false); 
+  const [showImageInfo, setShowImageInfo] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,6 +96,7 @@ const DamageImage = () => {
       const params = {
         dataset: "getImages",
         model,
+        factory,
         damageType,
         partDamaged: partDamagedType,
         severity: damageSeverity,
@@ -109,7 +115,7 @@ const DamageImage = () => {
       const data = await response.json();
       setImageList(data.data.images || []);
       setSelectedImage(null);
-      setShowImageInfo(false); 
+      setShowImageInfo(false);
     } catch (error) {
       console.error('Error fetching images:', error);
     } finally {
@@ -120,12 +126,12 @@ const DamageImage = () => {
   const handleItemClick = (image) => {
     setSelectedImage(image);
     setImageLoading(true);
-    setShowImageInfo(false); 
+    setShowImageInfo(false);
   };
 
   const handleImageLoad = () => {
     setImageLoading(false);
-    setShowImageInfo(true); 
+    setShowImageInfo(true);
   };
 
   return (
@@ -142,7 +148,19 @@ const DamageImage = () => {
               </Select>
             </Form.Item>
           </Col>
-          <Col span={4}>
+
+          <Col span={3}>
+            <Form.Item label="Factory">
+              <Select value={factory} onChange={(value) => setFactory(value)}>
+                <Option value="All">All</Option>
+                {factoryTypes.map(factoryOption => (
+                  <Option key={factoryOption} value={factoryOption}>{factoryOption}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+
+          <Col span={3}>
             <Form.Item label="Damage Type">
               <Select value={damageType} onChange={(value) => setDamageType(value)}>
                 <Option value="All">All</Option>
@@ -152,7 +170,8 @@ const DamageImage = () => {
               </Select>
             </Form.Item>
           </Col>
-          <Col span={4}>
+
+          <Col span={3}>
             <Form.Item label="Damage Severity">
               <Select value={damageSeverity} onChange={(value) => setDamageSeverity(value)}>
                 <Option value="All">All</Option>
@@ -162,7 +181,8 @@ const DamageImage = () => {
               </Select>
             </Form.Item>
           </Col>
-          <Col span={4}>
+
+          <Col span={3}>
             <Form.Item label="Part Damaged">
               <Select value={partDamagedType} onChange={(value) => setPartDamagedType(value)}>
                 <Option value="All">All</Option>
@@ -172,7 +192,8 @@ const DamageImage = () => {
               </Select>
             </Form.Item>
           </Col>
-          <Col span={4}>
+
+          <Col span={3}>
             <Form.Item label="Model">
               <Select
                 showSearch
@@ -190,7 +211,8 @@ const DamageImage = () => {
               </Select>
             </Form.Item>
           </Col>
-          <Col span={4}>
+
+          <Col span={5}>
             <ConfigProvider theme={{ token: { colorPrimary: '#1890ff', colorText: 'black' } }}>
               <Form.Item
                 label={
@@ -214,13 +236,16 @@ const DamageImage = () => {
               </Form.Item>
             </ConfigProvider>
           </Col>
-          <Col span={24} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+
+          {/* Align the Search Images button in the right corner below the Book Date Range */}
+          <Col span={24} style={{ textAlign: 'right' }}>
             <Form.Item>
               <Button type="primary" onClick={handleSearch}>Search Images</Button>
             </Form.Item>
           </Col>
         </Row>
       </Form>
+
       {loading ? (
         <div className="loading-spinner">
           <Spin size="large" />
@@ -252,7 +277,7 @@ const DamageImage = () => {
                   <h2 className="image-title">{selectedImage.title}</h2>
                   <img src={selectedImage.path} alt={selectedImage.title} onLoad={handleImageLoad} />
                 </div>
-                
+
                 {showImageInfo && (
                   <div className="image-info" style={{ marginLeft: '20px' }}>
                     <p><strong>Damage Type:</strong> {selectedImage.damageType}</p>

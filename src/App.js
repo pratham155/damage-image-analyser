@@ -10,6 +10,12 @@ import './App.css';
 const { Header, Content } = Layout;
 
 const App = () => {
+
+  const handleFeedbackClick = () => {
+    window.open('https://forms.office.com/pages/responsepage.aspx?id=ywjFQzPFg0CBBXda4er3IR3vmzIsVIhEny3_C1bF9nVUOUVVRkVUVUlQRkdaVTFERk5MUk1SUlNCWi4u', '_blank');
+  };
+
+
   return (
     <Router>
       <Layout>
@@ -38,6 +44,9 @@ const App = () => {
             
           </Routes>
         </Content>
+        <div className="feedback-button" onClick={handleFeedbackClick}>
+          Feedback
+        </div>
       </Layout>
     </Router>
   );
