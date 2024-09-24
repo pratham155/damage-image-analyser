@@ -260,7 +260,7 @@ const DamageImage = () => {
               dataSource={imageList}
               renderItem={item => (
                 <List.Item onClick={() => handleItemClick(item)} className="list-item">
-                  <Typography.Text mark></Typography.Text> {item.title}
+                  <Typography.Text mark></Typography.Text> {item.title1 || item.title}
                 </List.Item>
               )}
             />
@@ -274,8 +274,14 @@ const DamageImage = () => {
             {selectedImage && (
               <>
                 <div className="selected-image">
-                  <h2 className="image-title">{selectedImage.title}</h2>
-                  <img src={selectedImage.path} alt={selectedImage.title} onLoad={handleImageLoad} />
+                  <h2 className="image-title">{selectedImage.title1 || selectedImage.title}</h2>
+                  {/* Map through the array of images and display both the image title and the image */}
+                  {Array.isArray(selectedImage.path) && selectedImage.path.map((img, index) => (
+                    <div key={index}>
+                      <h3>{img.title}</h3> {/* Display the image title */}
+                      <img src={img.path} alt={img.title} onLoad={handleImageLoad} />
+                    </div>
+                  ))}
                 </div>
 
                 {showImageInfo && (
