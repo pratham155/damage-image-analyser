@@ -53,7 +53,7 @@
 
 .list-item:hover {
   background-color:#577FB5; 
-  color: #FFFFFF;
+  /* color: #FFFFFF; */
 }
 
 .list-item h3 {
