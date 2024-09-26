@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, message, Tooltip } from 'antd';
+import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import config from './config';
 import './DamageImage.css';
@@ -37,9 +37,10 @@ const DamageImage = () => {
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [imageList, setImageList] = useState([]);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null); // State for selected image
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
+  const [showImageInfo, setShowImageInfo] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,7 +108,8 @@ const DamageImage = () => {
 
       const data = await response.json();
       setImageList(data.data.images || []);
-      setSelectedImage(null);
+      setSelectedImage(null);  // Clear the previous selection
+      setShowImageInfo(false);
     } catch (error) {
       console.error('Error fetching images:', error);
     } finally {
@@ -118,10 +120,12 @@ const DamageImage = () => {
   const handleItemClick = (image) => {
     setSelectedImage(image);
     setImageLoading(true);
+    setShowImageInfo(false);
   };
 
   const handleImageLoad = () => {
     setImageLoading(false);
+    setShowImageInfo(true);
   };
 
   return (
@@ -129,14 +133,8 @@ const DamageImage = () => {
       <Form layout="vertical">
         <Row gutter={16}>
           <Col span={4}>
-            <Form.Item 
-              label="Product Type" 
-              required
-            >
-              <Select
-                value={productType}
-                onChange={(value) => setProductType(value)}
-              >
+            <Form.Item label="Product Type" required>
+              <Select value={productType} onChange={(value) => setProductType(value)}>
                 <Option value="null">Select</Option>
                 {productTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
@@ -144,12 +142,10 @@ const DamageImage = () => {
               </Select>
             </Form.Item>
           </Col>
+
           <Col span={4}>
             <Form.Item label="Damage Type">
-              <Select
-                value={damageType}
-                onChange={(value) => setDamageType(value)}
-              >
+              <Select value={damageType} onChange={(value) => setDamageType(value)}>
                 <Option value="All">All</Option>
                 {damageTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
@@ -157,12 +153,10 @@ const DamageImage = () => {
               </Select>
             </Form.Item>
           </Col>
+
           <Col span={4}>
             <Form.Item label="Damage Severity">
-              <Select
-                value={damageSeverity}
-                onChange={(value) => setDamageSeverity(value)}
-              >
+              <Select value={damageSeverity} onChange={(value) => setDamageSeverity(value)}>
                 <Option value="All">All</Option>
                 {severityTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
@@ -170,12 +164,10 @@ const DamageImage = () => {
               </Select>
             </Form.Item>
           </Col>
+
           <Col span={4}>
             <Form.Item label="Part Damaged">
-              <Select
-                value={partDamagedType}
-                onChange={(value) => setPartDamagedType(value)}
-              >
+              <Select value={partDamagedType} onChange={(value) => setPartDamagedType(value)}>
                 <Option value="All">All</Option>
                 {partDamaged.map(part => (
                   <Option key={part} value={part}>{part}</Option>
@@ -183,27 +175,26 @@ const DamageImage = () => {
               </Select>
             </Form.Item>
           </Col>
+
           <Col span={4}>
-          <Form.Item label="Model">
-  <Select
-    showSearch
-    value={model}
-    onChange={(value) => setModel(value)}
-    filterOption={(input, option) =>
-      option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-    }
-    placeholder="Search Model"
-  >
-    <Option value="All">All</Option>
-    {models.map(model => (
-      <Option key={model} value={model}>{model}</Option>
-    ))}
-  </Select>
-</Form.Item>
-
-
-
+            <Form.Item label="Model">
+              <Select
+                showSearch
+                value={model}
+                onChange={(value) => setModel(value)}
+                filterOption={(input, option) =>
+                  option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
+                placeholder="Search Model"
+              >
+                <Option value="All">All</Option>
+                {models.map(model => (
+                  <Option key={model} value={model}>{model}</Option>
+                ))}
+              </Select>
+            </Form.Item>
           </Col>
+
           <Col span={4}>
             <ConfigProvider theme={{ token: { colorPrimary: '#1890ff', colorText: 'black' } }}>
               <Form.Item
@@ -228,13 +219,15 @@ const DamageImage = () => {
               </Form.Item>
             </ConfigProvider>
           </Col>
-          <Col span={24} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+
+          <Col span={24} style={{ textAlign: 'right' }}>
             <Form.Item>
               <Button type="primary" onClick={handleSearch}>Search Images</Button>
             </Form.Item>
           </Col>
         </Row>
       </Form>
+
       {loading ? (
         <div className="loading-spinner">
           <Spin size="large" />
@@ -242,29 +235,53 @@ const DamageImage = () => {
       ) : (
         <div className="image-container">
           <div className="image-list">
-            <List
-              size="large"
-              header={<div>Search Images</div>}
-              bordered
-              dataSource={imageList}
-              renderItem={item => (
-                <List.Item onClick={() => handleItemClick(item)} className="list-item">
-                  <Typography.Text mark></Typography.Text> {item.title}
-                </List.Item>
-              )}
-            />
+          <List
+  size="large"
+  header={<div>Search Images</div>}
+  bordered
+  dataSource={imageList}
+  renderItem={item => (
+    <List.Item
+      onClick={() => handleItemClick(item)}
+      className="list-item"
+      style={{
+        backgroundColor: selectedImage === item ? '#577FB5' : 'white', // Highlight only when selected
+        cursor: 'pointer', // Make cursor pointer for clickable effect
+      }}
+    >
+      <Typography.Text mark></Typography.Text> {item.title1 || item.title}
+    </List.Item>
+  )}
+/>
+
           </div>
-          <div className="selected-image-container">
+          <div className="selected-image-container" style={{ display: 'flex', alignItems: 'flex-start' }}>
             {imageLoading && (
               <div className="loading-spinner">
                 <Spin size="large" />
               </div>
             )}
             {selectedImage && (
-              <div className="selected-image">
-                <h2>{selectedImage.title}</h2>
-                <img src={selectedImage.path} alt={selectedImage.title} onLoad={handleImageLoad} />
-              </div>
+              <>
+                <div className="selected-image">
+                  <h2 className="image-title">{selectedImage.title1 || selectedImage.title}</h2>
+                  {/* Map through the array of images and display both the image title and the image */}
+                  {Array.isArray(selectedImage.path) && selectedImage.path.map((img, index) => (
+                    <div key={index}>
+                      <h3>{img.title}</h3> {/* Display the image title */}
+                      <img src={img.path} alt={img.title} onLoad={handleImageLoad} />
+                    </div>
+                  ))}
+                </div>
+
+                {showImageInfo && (
+                  <div className="image-info" style={{ marginLeft: '20px' }}>
+                    <p><strong>Damage Type:</strong> {selectedImage.damageType}</p>
+                    <p><strong>Severity:</strong> {selectedImage.severity}</p>
+                    <p><strong>Part Damaged:</strong> {selectedImage.partDamaged}</p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
