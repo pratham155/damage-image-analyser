@@ -30,14 +30,16 @@ const DamageImage = () => {
   const [severityTypes, setSeverityTypes] = useState([]);
   const [partDamaged, setPartDamaged] = useState([]);
   const [models, setModels] = useState([]);
+  const [manufacturingMonths, setManufacturingMonths] = useState([]); 
   const [damageType, setDamageType] = useState('All');
   const [damageSeverity, setDamageSeverity] = useState('All');
   const [partDamagedType, setPartDamagedType] = useState('All');
+  const [manufacturingMonth, setManufacturingMonth] = useState('All'); 
   const [model, setModel] = useState('All');
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [imageList, setImageList] = useState([]);
-  const [selectedImage, setSelectedImage] = useState(null); // State for selected image
+  const [selectedImage, setSelectedImage] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
   const [showImageInfo, setShowImageInfo] = useState(false);
@@ -50,14 +52,16 @@ const DamageImage = () => {
           'API-Key': config.apiKey
         };
 
-        const [partsResponse, damageResponse, severityResponse, modelsResponse] = await Promise.all([
+        
+        const [partsResponse, damageResponse, severityResponse, modelsResponse, monthsResponse] = await Promise.all([
           fetch(`${config.BASE_URL}?dataset=getPartsDamaged`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getDamageTypes`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getSeverityTypes`, { headers }),
-          fetch(`${config.BASE_URL}?dataset=getModels`, { headers })
+          fetch(`${config.BASE_URL}?dataset=getModels`, { headers }),
+          fetch(`${config.BASE_URL}?dataset=getManfMonth`, { headers }) 
         ]);
 
-        if (!partsResponse.ok || !damageResponse.ok || !severityResponse.ok || !modelsResponse.ok) {
+        if (!partsResponse.ok || !damageResponse.ok || !severityResponse.ok || !modelsResponse.ok || !monthsResponse.ok) {
           throw new Error('Failed to fetch data from one or more APIs');
         }
 
@@ -65,11 +69,13 @@ const DamageImage = () => {
         const damageData = await damageResponse.json();
         const severityData = await severityResponse.json();
         const modelsData = await modelsResponse.json();
+        const monthsData = await monthsResponse.json(); 
 
         setPartDamaged(partsData.data.partDamaged);
         setDamageTypes(damageData.data.damageType);
         setSeverityTypes(severityData.data.severity);
         setModels(modelsData.data.model);
+        setManufacturingMonths(monthsData.data.manfMonth || []); 
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -95,6 +101,7 @@ const DamageImage = () => {
         partDamaged: partDamagedType,
         severity: damageSeverity,
         prd_ln: "DISHWASHER",
+        manufacturingMonth, 
         from_booked_date: fromDate ? fromDate.format('YYYY-MM-DD') : '',
         to_booked_date: toDate ? toDate.format('YYYY-MM-DD') : ''
       };
@@ -108,7 +115,7 @@ const DamageImage = () => {
 
       const data = await response.json();
       setImageList(data.data.images || []);
-      setSelectedImage(null);  // Clear the previous selection
+      setSelectedImage(null); 
       setShowImageInfo(false);
     } catch (error) {
       console.error('Error fetching images:', error);
@@ -143,7 +150,19 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={4}>
+          
+          <Col span={3}>
+            <Form.Item label="Manufacturing Month">
+              <Select value={manufacturingMonth} onChange={(value) => setManufacturingMonth(value)}>
+                <Option value="All">All</Option>
+                {manufacturingMonths.map(month => (
+                  <Option key={month} value={month}>{month}</Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+
+          <Col span={3}>
             <Form.Item label="Damage Type">
               <Select value={damageType} onChange={(value) => setDamageType(value)}>
                 <Option value="All">All</Option>
@@ -154,7 +173,7 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={4}>
+          <Col span={3}>
             <Form.Item label="Damage Severity">
               <Select value={damageSeverity} onChange={(value) => setDamageSeverity(value)}>
                 <Option value="All">All</Option>
@@ -165,7 +184,7 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={4}>
+          <Col span={3}>
             <Form.Item label="Part Damaged">
               <Select value={partDamagedType} onChange={(value) => setPartDamagedType(value)}>
                 <Option value="All">All</Option>
@@ -176,7 +195,7 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={4}>
+          <Col span={3}>
             <Form.Item label="Model">
               <Select
                 showSearch
@@ -195,7 +214,7 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={4}>
+          <Col span={5}>
             <ConfigProvider theme={{ token: { colorPrimary: '#1890ff', colorText: 'black' } }}>
               <Form.Item
                 label={
@@ -235,25 +254,24 @@ const DamageImage = () => {
       ) : (
         <div className="image-container">
           <div className="image-list">
-          <List
-  size="large"
-  header={<div>Search Images</div>}
-  bordered
-  dataSource={imageList}
-  renderItem={item => (
-    <List.Item
-      onClick={() => handleItemClick(item)}
-      className="list-item"
-      style={{
-        backgroundColor: selectedImage === item ? '#577FB5' : 'white', // Highlight only when selected
-        cursor: 'pointer', // Make cursor pointer for clickable effect
-      }}
-    >
-      <Typography.Text mark></Typography.Text> {item.title1 || item.title}
-    </List.Item>
-  )}
-/>
-
+            <List
+              size="large"
+              header={<div>Search Images</div>}
+              bordered
+              dataSource={imageList}
+              renderItem={item => (
+                <List.Item
+                  onClick={() => handleItemClick(item)}
+                  className="list-item"
+                  style={{
+                    backgroundColor: selectedImage === item ? '#577FB5' : 'white', // Highlight only when selected
+                    cursor: 'pointer', // Make cursor pointer for clickable effect
+                  }}
+                >
+                  <Typography.Text mark></Typography.Text> {item.title1 || item.title}
+                </List.Item>
+              )}
+            />
           </div>
           <div className="selected-image-container" style={{ display: 'flex', alignItems: 'flex-start' }}>
             {imageLoading && (
