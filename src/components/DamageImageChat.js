@@ -2,10 +2,10 @@ import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
 import { Layout, Button, Input, Spin, Typography } from 'antd';
 import { UserOutlined, RobotOutlined, SendOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';  // Enable raw HTML in markdown
+import rehypeRaw from 'rehype-raw';  
 import remarkGfm from 'remark-gfm';
 import axios from 'axios';
-import * as d3 from 'd3'; // D3.js for graphs
+import * as d3 from 'd3'; 
 import config from './config';
 import './DamageImageChat.css';
 
@@ -25,7 +25,7 @@ const Message = memo(({ type, text }) => (
     <div className="message-content">
       <ReactMarkdown 
         remarkPlugins={[remarkGfm]} 
-        rehypePlugins={[rehypeRaw]} // Enable raw HTML rendering
+        rehypePlugins={[rehypeRaw]} 
       >
         {text}
       </ReactMarkdown>
@@ -66,17 +66,17 @@ const DamageImageChat = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Function to inject D3 graph into div after render
+  
   const injectGraph = useCallback((graphData, id) => {
     if (graphData) {
       // const svg = d3.select(`#graph-placeholder`);
       const svg = d3.select(`#${id}`)
-      svg.selectAll('*').remove(); // Clear any previous content
+      svg.selectAll('*').remove(); 
       
-      // Adjust margins to provide more space for the x-axis labels
+
 const margin = { top: 20, right: 30, bottom: 20, left: 40 };
 
-// Increase the width to accommodate labels
+
 const width = 800;
 const height = 400;
 
@@ -84,7 +84,7 @@ const svgElement = svg.append('svg')
   .attr('width', width)
   .attr('height', height);
 
-// Set up scales with updated width
+
 const x = d3.scaleBand()
   .domain(graphData.map(d => d.label))
   .range([margin.left, width - margin.right])
@@ -106,15 +106,26 @@ svgElement.append('g')
   .attr('width', x.bandwidth())
   .attr('fill', '#69b3a2');
 
-// Add X axis
+
+// svgElement.append('g')
+//   .selectAll('text')
+//   .data(graphData)
+//   .enter().append('text')
+//   .attr('x', d => x(d.label) + x.bandwidth() / 2) 
+//   .attr('y', d => y(d.value) - 5) 
+//   .attr('text-anchor', 'middle') 
+//   .text(d => d.value) 
+//   .style('fill', 'black') 
+//   .style('font-size', '12px'); 
+
+
 svgElement.append('g')
   .attr('transform', `translate(0,${height - margin.bottom})`)
   .call(d3.axisBottom(x))
   .selectAll('text')
-  .style('text-anchor', 'middle') // Center the labels
-  .style('font-size', '10px'); // Optionally adjust font size
+  .style('text-anchor', 'middle') 
+  .style('font-size', '10px')
 
-// Add Y axis
 svgElement.append('g')
   .attr('transform', `translate(${margin.left},0)`)
   .call(d3.axisLeft(y));
@@ -149,7 +160,7 @@ svgElement.append('g')
         { type: 'answer', text: markdown }
       ]);
 
-      setTimeout(() => injectGraph(graphData, divId), 1000); // Inject graph after rendering the div
+      setTimeout(() => injectGraph(graphData, divId), 1000); 
     } catch (error) {
       console.error('Error fetching data', error);
       setMessages(prevMessages => [
@@ -190,7 +201,7 @@ svgElement.append('g')
           { type: 'answer', text: markdown }
         ]);
 
-        setTimeout(() => injectGraph(graphData, divId), 1000); // Inject graph after rendering the div
+        setTimeout(() => injectGraph(graphData, divId), 1000); 
       } catch (error) {
         console.error('Error fetching data', error);
         setMessages(prevMessages => [
@@ -245,12 +256,12 @@ svgElement.append('g')
   );
 };
 
-// Convert the response data to markdown and return a unique divId for the graph
+
 const convertJsonToMarkdown = (data) => {
   let markdown = '';
   let graphData = null;
   let divId = '';
-  let isGraphRendered = false; // Flag to ensure the graph is rendered only for the first table
+  let isGraphRendered = false; 
 
   data.forEach(item => {
     if (item.type === "text") {
@@ -264,18 +275,18 @@ const convertJsonToMarkdown = (data) => {
 
       markdown += "\n"
 
-      // Render graph only for the first table
+      
       if (!isGraphRendered) {
         divId = `graph-placeholder-${item.type}-${Math.random().toString(36).substring(7)}`;
         markdown += `<div id="${divId}"></div>\n\n`;
 
-        // Capture the first table's data for graph rendering
+
         graphData = item.rows.map(row => ({
-          label: row[0],  // Assuming first column is the label
-          value: +row[1]  // Assuming second column is the value
+          label: row[0],  
+          value: +row[1]  
         }));
 
-        isGraphRendered = true; // Mark that the graph has been rendered
+        isGraphRendered = true; 
       }
     }
   });
