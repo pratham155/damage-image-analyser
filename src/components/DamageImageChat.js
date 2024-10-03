@@ -2,8 +2,10 @@ import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
 import { Layout, Button, Input, Spin, Typography } from 'antd';
 import { UserOutlined, RobotOutlined, SendOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';  // Enable raw HTML in markdown
 import remarkGfm from 'remark-gfm';
 import axios from 'axios';
+import * as d3 from 'd3'; // D3.js for graphs
 import config from './config';
 import './DamageImageChat.css';
 
@@ -17,21 +19,23 @@ const predefinedQuestions = [
   "Which models have the most damage"
 ];
 
-
 const Message = memo(({ type, text }) => (
   <div className={`message ${type}`}>
     {type === 'question' ? <UserOutlined className="message-icon" /> : <RobotOutlined className="message-icon" />}
     <div className="message-content">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+      <ReactMarkdown 
+        remarkPlugins={[remarkGfm]} 
+        rehypePlugins={[rehypeRaw]} // Enable raw HTML rendering
+      >
+        {text}
+      </ReactMarkdown>
     </div>
   </div>
 ));
 
-
 const MessageList = memo(({ messages, loading }) => {
   const messagesEndRef = useRef(null);
 
-  
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -52,7 +56,6 @@ const MessageList = memo(({ messages, loading }) => {
           <Spin size="large" />
         </div>
       )}
-      
       <div ref={messagesEndRef} />
     </div>
   );
@@ -62,6 +65,63 @@ const DamageImageChat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Function to inject D3 graph into div after render
+  const injectGraph = useCallback((graphData, id) => {
+    if (graphData) {
+      // const svg = d3.select(`#graph-placeholder`);
+      const svg = d3.select(`#${id}`)
+      svg.selectAll('*').remove(); // Clear any previous content
+      
+      // Adjust margins to provide more space for the x-axis labels
+const margin = { top: 20, right: 30, bottom: 20, left: 40 };
+
+// Increase the width to accommodate labels
+const width = 800;
+const height = 400;
+
+const svgElement = svg.append('svg')
+  .attr('width', width)
+  .attr('height', height);
+
+// Set up scales with updated width
+const x = d3.scaleBand()
+  .domain(graphData.map(d => d.label))
+  .range([margin.left, width - margin.right])
+  .padding(0.1);
+
+const y = d3.scaleLinear()
+  .domain([0, d3.max(graphData, d => d.value)])
+  .nice()
+  .range([height - margin.bottom, margin.top]);
+
+// Append bars
+svgElement.append('g')
+  .selectAll('rect')
+  .data(graphData)
+  .enter().append('rect')
+  .attr('x', d => x(d.label))
+  .attr('y', d => y(d.value))
+  .attr('height', d => y(0) - y(d.value))
+  .attr('width', x.bandwidth())
+  .attr('fill', '#69b3a2');
+
+// Add X axis
+svgElement.append('g')
+  .attr('transform', `translate(0,${height - margin.bottom})`)
+  .call(d3.axisBottom(x))
+  .selectAll('text')
+  .style('text-anchor', 'middle') // Center the labels
+  .style('font-size', '10px'); // Optionally adjust font size
+
+// Add Y axis
+svgElement.append('g')
+  .attr('transform', `translate(${margin.left},0)`)
+  .call(d3.axisLeft(y));
+
+    }
+  }, []);
+
 
   const handleQuestionClick = useCallback(async (index) => {
     const question = predefinedQuestions[index];
@@ -83,11 +143,13 @@ const DamageImageChat = () => {
         }
       });
 
-      const markdown = convertJsonToMarkdown(response.data.Content);
+      const { markdown, graphData, divId } = convertJsonToMarkdown(response.data.Content);
       setMessages(prevMessages => [
         ...prevMessages,
         { type: 'answer', text: markdown }
       ]);
+
+      setTimeout(() => injectGraph(graphData, divId), 1000); // Inject graph after rendering the div
     } catch (error) {
       console.error('Error fetching data', error);
       setMessages(prevMessages => [
@@ -97,7 +159,7 @@ const DamageImageChat = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [injectGraph]);
 
   const handleSend = useCallback(async () => {
     if (input.trim()) {
@@ -107,7 +169,7 @@ const DamageImageChat = () => {
         { type: 'question', text: currentInput }
       ]);
 
-      setInput(''); 
+      setInput('');
 
       try {
         setLoading(true);
@@ -122,11 +184,13 @@ const DamageImageChat = () => {
           }
         });
 
-        const markdown = convertJsonToMarkdown(response.data.Content);
+        const { markdown, graphData, divId } = convertJsonToMarkdown(response.data.Content);
         setMessages(prevMessages => [
           ...prevMessages,
           { type: 'answer', text: markdown }
         ]);
+
+        setTimeout(() => injectGraph(graphData, divId), 1000); // Inject graph after rendering the div
       } catch (error) {
         console.error('Error fetching data', error);
         setMessages(prevMessages => [
@@ -137,9 +201,8 @@ const DamageImageChat = () => {
         setLoading(false);
       }
     }
-  }, [input]);
+  }, [input, injectGraph]);
 
-  
   const handleInputChange = useCallback((e) => {
     setInput(e.target.value);
   }, []);
@@ -173,7 +236,7 @@ const DamageImageChat = () => {
           />
           <Button type="primary" onClick={handleSend} disabled={loading} icon={<SendOutlined />} />
         </div>
-        
+
         <Typography.Paragraph style={{ margin: '2px 0', textAlign: 'center', color: '#1C4E80' }}>
          Disclaimer: Data is not inclusive of all damage returns for the product line and manufacturing site. It is currently limited to returns from BG&I, NECO, and Contract customers and to entries that include legible damage photos.
         </Typography.Paragraph>
@@ -182,8 +245,13 @@ const DamageImageChat = () => {
   );
 };
 
+// Convert the response data to markdown and return a unique divId for the graph
 const convertJsonToMarkdown = (data) => {
   let markdown = '';
+  let graphData = null;
+  let divId = '';
+  let isGraphRendered = false; // Flag to ensure the graph is rendered only for the first table
+
   data.forEach(item => {
     if (item.type === "text") {
       markdown += `${item.description}\n\n`;
@@ -193,10 +261,27 @@ const convertJsonToMarkdown = (data) => {
       item.rows.forEach(row => {
         markdown += `| ${row.join(" | ")} |\n`;
       });
-      markdown += `\n`;
+
+      markdown += "\n"
+
+      // Render graph only for the first table
+      if (!isGraphRendered) {
+        divId = `graph-placeholder-${item.type}-${Math.random().toString(36).substring(7)}`;
+        markdown += `<div id="${divId}"></div>\n\n`;
+
+        // Capture the first table's data for graph rendering
+        graphData = item.rows.map(row => ({
+          label: row[0],  // Assuming first column is the label
+          value: +row[1]  // Assuming second column is the value
+        }));
+
+        isGraphRendered = true; // Mark that the graph has been rendered
+      }
     }
   });
-  return markdown;
+
+  return { markdown, graphData, divId };
 };
+
 
 export default DamageImageChat;
