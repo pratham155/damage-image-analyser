@@ -107,16 +107,16 @@ svgElement.append('g')
   .attr('fill', '#69b3a2');
 
 
-// svgElement.append('g')
-//   .selectAll('text')
-//   .data(graphData)
-//   .enter().append('text')
-//   .attr('x', d => x(d.label) + x.bandwidth() / 2) 
-//   .attr('y', d => y(d.value) - 5) 
-//   .attr('text-anchor', 'middle') 
-//   .text(d => d.value) 
-//   .style('fill', 'black') 
-//   .style('font-size', '12px'); 
+svgElement.append('g')
+  .selectAll('text')
+  .data(graphData)
+  .enter().append('text')
+  .attr('x', d => x(d.label) + x.bandwidth() / 2) 
+  .attr('y', d => y(d.value) - 5) 
+  .attr('text-anchor', 'middle') 
+  .text(d => d.value) 
+  .style('fill', 'black') 
+  .style('font-size', '12px'); 
 
 
 svgElement.append('g')
