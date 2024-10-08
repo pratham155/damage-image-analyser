@@ -35,7 +35,7 @@ const DamageImage = () => {
   const [damageSeverity, setDamageSeverity] = useState('All');
   const [partDamagedType, setPartDamagedType] = useState('All');
   const [manufacturingMonth, setManufacturingMonth] = useState('All'); 
-  const [model, setModel] = useState('All');
+  const [selectedModels, setSelectedModels] = useState(['All']); // Default to "All"
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [imageList, setImageList] = useState([]);
@@ -52,7 +52,6 @@ const DamageImage = () => {
           'API-Key': config.apiKey
         };
 
-        
         const [partsResponse, damageResponse, severityResponse, modelsResponse, monthsResponse] = await Promise.all([
           fetch(`${config.BASE_URL}?dataset=getPartsDamaged`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getDamageTypes`, { headers }),
@@ -75,7 +74,7 @@ const DamageImage = () => {
         setDamageTypes(damageData.data.damageType);
         setSeverityTypes(severityData.data.severity);
         setModels(modelsData.data.model);
-        setManufacturingMonths(monthsData.data.manfMonth || []); 
+        setManufacturingMonths(monthsData.data.manfMonth || []);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -86,6 +85,18 @@ const DamageImage = () => {
     fetchData();
   }, []);
 
+  const handleModelChange = (value) => {
+    if (value.includes('All') && value.length > 1) {
+      // If "All" is selected along with others, remove "All"
+      setSelectedModels(value.filter(model => model !== 'All'));
+    } else if (!value.length) {
+      // If nothing is selected, default back to "All"
+      setSelectedModels(['All']);
+    } else {
+      setSelectedModels(value); // Otherwise, just set the selected values
+    }
+  };
+
   const handleSearch = async () => {
     setLoading(true);
     try {
@@ -93,6 +104,8 @@ const DamageImage = () => {
         'Content-Type': 'application/json',
         'API-Key': config.apiKey
       };
+
+      let model = selectedModels.includes('All') ? 'All' : selectedModels.join(','); // If "All" is selected, use "All"
 
       const params = {
         dataset: "getImages",
@@ -139,10 +152,10 @@ const DamageImage = () => {
     <div className="images-component">
       <Form layout="vertical">
         <Row gutter={16}>
-          <Col span={4}>
+          <Col span={3}>
             <Form.Item label="Product Type" required>
               <Select value={productType} onChange={(value) => setProductType(value)}>
-                <Option value="null">Select</Option>
+              <Option value="null">Select</Option>
                 {productTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
                 ))}
@@ -150,7 +163,6 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          
           <Col span={3}>
             <Form.Item label="Manufacturing Month">
               <Select value={manufacturingMonth} onChange={(value) => setManufacturingMonth(value)}>
@@ -195,16 +207,17 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={3}>
+          <Col span={5}>
             <Form.Item label="Model">
               <Select
+                mode="multiple" // Enable multi-selection
                 showSearch
-                value={model}
-                onChange={(value) => setModel(value)}
+                value={selectedModels}
+                onChange={handleModelChange}
                 filterOption={(input, option) =>
                   option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                 }
-                placeholder="Search Model"
+                placeholder="Select Models"
               >
                 <Option value="All">All</Option>
                 {models.map(model => (
@@ -214,7 +227,7 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={5}>
+          <Col span={4}>
             <ConfigProvider theme={{ token: { colorPrimary: '#1890ff', colorText: 'black' } }}>
               <Form.Item
                 label={
@@ -283,10 +296,9 @@ const DamageImage = () => {
               <>
                 <div className="selected-image">
                   <h2 className="image-title">{selectedImage.title1 || selectedImage.title}</h2>
-                  {/* Map through the array of images and display both the image title and the image */}
                   {Array.isArray(selectedImage.path) && selectedImage.path.map((img, index) => (
                     <div key={index}>
-                      <h3>{img.title}</h3> {/* Display the image title */}
+                      <h3>{img.title}</h3>
                       <img src={img.path} alt={img.title} onLoad={handleImageLoad} />
                     </div>
                   ))}
