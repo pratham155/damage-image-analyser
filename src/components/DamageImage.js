@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, Tooltip } from 'antd';
+import { List, Select, DatePicker, Button, Form, Row, Col, Spin, ConfigProvider, Typography, Tooltip, TreeSelect } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import config from './config';
 import './DamageImage.css';
@@ -30,16 +30,16 @@ const DamageImage = () => {
   const [severityTypes, setSeverityTypes] = useState([]);
   const [partDamaged, setPartDamaged] = useState([]);
   const [models, setModels] = useState([]);
-  const [manufacturingMonths, setManufacturingMonths] = useState([]); 
+  const [manufacturingMonths, setManufacturingMonths] = useState([]);
   const [damageType, setDamageType] = useState('All');
   const [damageSeverity, setDamageSeverity] = useState('All');
   const [partDamagedType, setPartDamagedType] = useState('All');
-  const [manufacturingMonth, setManufacturingMonth] = useState('All'); 
-  const [selectedModels, setSelectedModels] = useState(['All']); // Default to "All"
+  const [manufacturingMonth, setManufacturingMonth] = useState('All');
+  const [selectedModels, setSelectedModels] = useState(['All']); 
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [imageList, setImageList] = useState([]);
-  const [selectedImage, setSelectedImage] = useState(null); 
+  const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
   const [showImageInfo, setShowImageInfo] = useState(false);
@@ -57,7 +57,7 @@ const DamageImage = () => {
           fetch(`${config.BASE_URL}?dataset=getDamageTypes`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getSeverityTypes`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getModels`, { headers }),
-          fetch(`${config.BASE_URL}?dataset=getManfMonth`, { headers }) 
+          fetch(`${config.BASE_URL}?dataset=getManfMonth`, { headers })
         ]);
 
         if (!partsResponse.ok || !damageResponse.ok || !severityResponse.ok || !modelsResponse.ok || !monthsResponse.ok) {
@@ -68,12 +68,12 @@ const DamageImage = () => {
         const damageData = await damageResponse.json();
         const severityData = await severityResponse.json();
         const modelsData = await modelsResponse.json();
-        const monthsData = await monthsResponse.json(); 
+        const monthsData = await monthsResponse.json();
 
         setPartDamaged(partsData.data.partDamaged);
         setDamageTypes(damageData.data.damageType);
         setSeverityTypes(severityData.data.severity);
-        setModels(modelsData.data.model);
+        setModels([{ title: 'All', value: 'All' }, ...modelsData.data.model.map(model => ({ title: model, value: model }))]); 
         setManufacturingMonths(monthsData.data.manfMonth || []);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -87,13 +87,13 @@ const DamageImage = () => {
 
   const handleModelChange = (value) => {
     if (value.includes('All') && value.length > 1) {
-      // If "All" is selected along with others, remove "All"
+      
       setSelectedModels(value.filter(model => model !== 'All'));
     } else if (!value.length) {
-      // If nothing is selected, default back to "All"
+      
       setSelectedModels(['All']);
     } else {
-      setSelectedModels(value); // Otherwise, just set the selected values
+      setSelectedModels(value); 
     }
   };
 
@@ -105,7 +105,7 @@ const DamageImage = () => {
         'API-Key': config.apiKey
       };
 
-      let model = selectedModels.includes('All') ? 'All' : selectedModels.join(','); // If "All" is selected, use "All"
+      const model = selectedModels.includes('All') ? 'All' : selectedModels.join(','); 
 
       const params = {
         dataset: "getImages",
@@ -114,7 +114,7 @@ const DamageImage = () => {
         partDamaged: partDamagedType,
         severity: damageSeverity,
         prd_ln: "DISHWASHER",
-        manufacturingMonth, 
+        manufacturingMonth,
         from_booked_date: fromDate ? fromDate.format('YYYY-MM-DD') : '',
         to_booked_date: toDate ? toDate.format('YYYY-MM-DD') : ''
       };
@@ -128,7 +128,7 @@ const DamageImage = () => {
 
       const data = await response.json();
       setImageList(data.data.images || []);
-      setSelectedImage(null); 
+      setSelectedImage(null);
       setShowImageInfo(false);
     } catch (error) {
       console.error('Error fetching images:', error);
@@ -208,24 +208,28 @@ const DamageImage = () => {
           </Col>
 
           <Col span={5}>
-            <Form.Item label="Model">
-              <Select
-                mode="multiple" // Enable multi-selection
-                showSearch
-                value={selectedModels}
-                onChange={handleModelChange}
-                filterOption={(input, option) =>
-                  option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                }
-                placeholder="Select Models"
-              >
-                <Option value="All">All</Option>
-                {models.map(model => (
-                  <Option key={model} value={model}>{model}</Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
+  <Form.Item label="Model">
+    <TreeSelect
+      treeCheckable={true} 
+      showSearch
+      value={selectedModels}
+      treeData={[
+        { title: "All", value: "All" },  
+        ...models.filter(model => model.value !== "All"), 
+      ]}
+      onChange={handleModelChange}
+      placeholder="Select Models"
+      style={{ width: '100%' }}
+      dropdownStyle={{ maxHeight: 300, overflowY: 'auto' }} 
+      allowClear 
+      maxTagCount={2} 
+      maxTagPlaceholder={(omittedValues) => `+${omittedValues.length} more`} 
+    />
+  </Form.Item>
+</Col>
+
+
+
 
           <Col span={4}>
             <ConfigProvider theme={{ token: { colorPrimary: '#1890ff', colorText: 'black' } }}>
@@ -277,8 +281,8 @@ const DamageImage = () => {
                   onClick={() => handleItemClick(item)}
                   className="list-item"
                   style={{
-                    backgroundColor: selectedImage === item ? '#577FB5' : 'white', // Highlight only when selected
-                    cursor: 'pointer', // Make cursor pointer for clickable effect
+                    backgroundColor: selectedImage === item ? '#577FB5' : 'white',
+                    cursor: 'pointer',
                   }}
                 >
                   <Typography.Text mark></Typography.Text> {item.title1 || item.title}
