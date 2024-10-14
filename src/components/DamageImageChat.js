@@ -74,10 +74,10 @@ const DamageImageChat = () => {
       svg.selectAll('*').remove(); 
       
 
-const margin = { top: 20, right: 30, bottom: 20, left: 40 };
+const margin = { top: 20, right: 30, bottom: 50, left: 40 };
 
 
-const width = 800;
+const width =800;
 const height = 400;
 
 const svgElement = svg.append('svg')
@@ -123,8 +123,9 @@ svgElement.append('g')
   .attr('transform', `translate(0,${height - margin.bottom})`)
   .call(d3.axisBottom(x))
   .selectAll('text')
-  .style('text-anchor', 'middle') 
+  .style('text-anchor', 'end') 
   .style('font-size', '10px')
+  .attr('transform', 'rotate(-25)');
 
 svgElement.append('g')
   .attr('transform', `translate(${margin.left},0)`)

@@ -7,25 +7,11 @@ import './DamageImage.css';
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const productTypes = [
-  "Commercial AC",
-  "Zoneline",
-  "Refrigeration",
-  "Dishwasher",
-  "Cooking",
-  "Ductless",
-  "Freezer",
-  "Hoods",
-  "HVAC",
-  "Laundry",
-  "Microwave",
-  "RAC",
-  "Water Heater",
-  "Water Softener"
-];
-
 const DamageImage = () => {
-  const [productType, setProductType] = useState('Dishwasher');
+  const [productFactory, setProductFactory] = useState([]); // Store Product & Factory data
+  const [selectedProductFactory, setSelectedProductFactory] = useState('All'); // Selected Product & Factory
+  const [types, setTypes] = useState([]); // Store Type data
+  const [selectedType, setSelectedType] = useState('All'); // Selected Type
   const [damageTypes, setDamageTypes] = useState([]);
   const [severityTypes, setSeverityTypes] = useState([]);
   const [partDamaged, setPartDamaged] = useState([]);
@@ -35,7 +21,7 @@ const DamageImage = () => {
   const [damageSeverity, setDamageSeverity] = useState('All');
   const [partDamagedType, setPartDamagedType] = useState('All');
   const [manufacturingMonth, setManufacturingMonth] = useState('All');
-  const [selectedModels, setSelectedModels] = useState(['All']); 
+  const [selectedModels, setSelectedModels] = useState(['All']);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [imageList, setImageList] = useState([]);
@@ -52,15 +38,33 @@ const DamageImage = () => {
           'API-Key': config.apiKey
         };
 
-        const [partsResponse, damageResponse, severityResponse, modelsResponse, monthsResponse] = await Promise.all([
+        const [
+          partsResponse,
+          damageResponse,
+          severityResponse,
+          modelsResponse,
+          monthsResponse,
+          productFactoryResponse,
+          typeResponse // Fetch Type data
+        ] = await Promise.all([
           fetch(`${config.BASE_URL}?dataset=getPartsDamaged`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getDamageTypes`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getSeverityTypes`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getModels`, { headers }),
-          fetch(`${config.BASE_URL}?dataset=getManfMonth`, { headers })
+          fetch(`${config.BASE_URL}?dataset=getManfMonth`, { headers }),
+          fetch(`${config.BASE_URL}?dataset=getProductFactory`, { headers }), // Product & Factory API call
+          fetch(`${config.BASE_URL}?dataset=getProductLine`, { headers }) // Type API call
         ]);
 
-        if (!partsResponse.ok || !damageResponse.ok || !severityResponse.ok || !modelsResponse.ok || !monthsResponse.ok) {
+        if (
+          !partsResponse.ok ||
+          !damageResponse.ok ||
+          !severityResponse.ok ||
+          !modelsResponse.ok ||
+          !monthsResponse.ok ||
+          !productFactoryResponse.ok ||
+          !typeResponse.ok
+        ) {
           throw new Error('Failed to fetch data from one or more APIs');
         }
 
@@ -69,12 +73,16 @@ const DamageImage = () => {
         const severityData = await severityResponse.json();
         const modelsData = await modelsResponse.json();
         const monthsData = await monthsResponse.json();
+        const productFactoryData = await productFactoryResponse.json(); // Product & Factory data
+        const typeData = await typeResponse.json(); // Type data
 
-        setPartDamaged(partsData.data.partDamaged);
-        setDamageTypes(damageData.data.damageType);
-        setSeverityTypes(severityData.data.severity);
-        setModels([{ title: 'All', value: 'All' }, ...modelsData.data.model.map(model => ({ title: model, value: model }))]); 
+        setPartDamaged(partsData.data.partDamaged || []);
+        setDamageTypes(damageData.data.damageType || []);
+        setSeverityTypes(severityData.data.severity || []);
+        setModels([{ title: 'All', value: 'All' }, ...modelsData.data.model.map(model => ({ title: model, value: model }))] || []);
         setManufacturingMonths(monthsData.data.manfMonth || []);
+        setProductFactory(productFactoryData.data.productFactory || []); // Set Product & Factory data
+        setTypes(typeData.data.productLine || []); // Set Type data
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -87,13 +95,11 @@ const DamageImage = () => {
 
   const handleModelChange = (value) => {
     if (value.includes('All') && value.length > 1) {
-      
       setSelectedModels(value.filter(model => model !== 'All'));
     } else if (!value.length) {
-      
       setSelectedModels(['All']);
     } else {
-      setSelectedModels(value); 
+      setSelectedModels(value);
     }
   };
 
@@ -105,7 +111,7 @@ const DamageImage = () => {
         'API-Key': config.apiKey
       };
 
-      const model = selectedModels.includes('All') ? 'All' : selectedModels.join(','); 
+      const model = selectedModels.includes('All') ? 'All' : selectedModels.join(',');
 
       const params = {
         dataset: "getImages",
@@ -113,7 +119,8 @@ const DamageImage = () => {
         damageType,
         partDamaged: partDamagedType,
         severity: damageSeverity,
-        prd_ln: "DISHWASHER",
+        productFactory: selectedProductFactory, 
+        productLine: selectedType, 
         manufacturingMonth,
         from_booked_date: fromDate ? fromDate.format('YYYY-MM-DD') : '',
         to_booked_date: toDate ? toDate.format('YYYY-MM-DD') : ''
@@ -152,12 +159,38 @@ const DamageImage = () => {
     <div className="images-component">
       <Form layout="vertical">
         <Row gutter={16}>
+
+          {/* Product & Factory Dropdown */}
           <Col span={3}>
-            <Form.Item label="Product Type" required>
-              <Select value={productType} onChange={(value) => setProductType(value)}>
-              <Option value="null">Select</Option>
-                {productTypes.map(type => (
-                  <Option key={type} value={type}>{type}</Option>
+            <Form.Item label="Product & Factory" required>
+              <Select
+                value={selectedProductFactory}
+                onChange={(value) => setSelectedProductFactory(value)}
+                placeholder="Select Product & Factory"
+              >
+                <Option value="All">All</Option> {/* Default option to select All */}
+                {productFactory.map((factory) => (
+                  <Option key={factory} value={factory}>
+                    {factory}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+
+          {/* Type Dropdown */}
+          <Col span={3}>
+            <Form.Item label="Type" required>
+              <Select
+                value={selectedType}
+                onChange={(value) => setSelectedType(value)}
+                placeholder="Select Type"
+              >
+                <Option value="All">All</Option> {/* Default option to select All */}
+                {types.map((type) => (
+                  <Option key={type} value={type}>
+                    {type}
+                  </Option>
                 ))}
               </Select>
             </Form.Item>
@@ -207,31 +240,37 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={5}>
-  <Form.Item label="Model">
-    <TreeSelect
-      treeCheckable={true} 
-      showSearch
-      value={selectedModels}
-      treeData={[
-        { title: "All", value: "All" },  
-        ...models.filter(model => model.value !== "All"), 
-      ]}
-      onChange={handleModelChange}
-      placeholder="Select Models"
-      style={{ width: '100%' }}
-      dropdownStyle={{ maxHeight: 300, overflowY: 'auto' }} 
-      allowClear 
-      maxTagCount={2} 
-      maxTagPlaceholder={(omittedValues) => `+${omittedValues.length} more`} 
-    />
-  </Form.Item>
-</Col>
-
-
-
-
           <Col span={4}>
+            <Form.Item label="Model">
+              <TreeSelect
+                treeCheckable={true}
+                showSearch
+                value={selectedModels}
+                treeData={[
+                  { title: "All", value: "All" },
+                  ...models.filter(model => model.value !== "All"),
+                ]}
+                onChange={handleModelChange}
+                placeholder="Select Models"
+                style={{ width: '100%' }}
+                dropdownStyle={{ maxHeight: 300, overflowY: 'auto' }}
+                allowClear
+                maxTagCount={2}
+                maxTagPlaceholder={(omittedValues) => `+${omittedValues.length} more`}
+              />
+            </Form.Item>
+          </Col>
+
+          {/* Search Images Button beside Model */}
+          <Col span={2} style={{ display: 'flex', alignItems: 'center' }}>
+            <Button type="primary" onClick={handleSearch}>
+              Search Images
+            </Button>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col span={12}>
             <ConfigProvider theme={{ token: { colorPrimary: '#1890ff', colorText: 'black' } }}>
               <Form.Item
                 label={
@@ -254,12 +293,6 @@ const DamageImage = () => {
                 />
               </Form.Item>
             </ConfigProvider>
-          </Col>
-
-          <Col span={24} style={{ textAlign: 'right' }}>
-            <Form.Item>
-              <Button type="primary" onClick={handleSearch}>Search Images</Button>
-            </Form.Item>
           </Col>
         </Row>
       </Form>
