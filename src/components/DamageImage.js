@@ -118,12 +118,12 @@ const DamageImage = () => {
         partDamagedResponse,
         modelsResponse
       ] = await Promise.all([
-        fetch(`${config.BASE_URL}?dataset=getProductLine&getProductFactory=${value}`, { headers }),
-        fetch(`${config.BASE_URL}?dataset=getManfMonth&getProductFactory=${value}`, { headers }),
-        fetch(`${config.BASE_URL}?dataset=getDamageTypes&getProductFactory=${value}`, { headers }),
-        fetch(`${config.BASE_URL}?dataset=getSeverityTypes&getProductFactory=${value}`, { headers }),
-        fetch(`${config.BASE_URL}?dataset=getPartsDamaged&getProductFactory=${value}`, { headers }),
-        fetch(`${config.BASE_URL}?dataset=getModels&getProductFactory=${value}`, { headers })
+        fetch(`${config.BASE_URL}?dataset=getProductLine&productFactory=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getManfMonth&productFactory=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getDamageTypes&productFactory=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getSeverityTypes&productFactory=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getPartsDamaged&productFactory=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getModels&productFactory=${value}`, { headers })
       ]);
 
       const typeData = await typeResponse.json();
@@ -168,11 +168,11 @@ const DamageImage = () => {
         partDamagedResponse,
         modelsResponse
       ] = await Promise.all([
-        fetch(`${config.BASE_URL}?dataset=getManfMonth&getProductFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
-        fetch(`${config.BASE_URL}?dataset=getDamageTypes&getProductFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
-        fetch(`${config.BASE_URL}?dataset=getSeverityTypes&getProductFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
-        fetch(`${config.BASE_URL}?dataset=getPartsDamaged&getProductFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
-        fetch(`${config.BASE_URL}?dataset=getModels&getProductFactory=${selectedProductFactory}&productLine=${value}`, { headers })
+        fetch(`${config.BASE_URL}?dataset=getManfMonth&productFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getDamageTypes&productFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getSeverityTypes&productFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getPartsDamaged&productFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getModels&productFactory=${selectedProductFactory}&productLine=${value}`, { headers })
       ]);
 
       const monthsData = await monthsResponse.json();
