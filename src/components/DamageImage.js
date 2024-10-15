@@ -8,10 +8,10 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const DamageImage = () => {
-  const [productFactory, setProductFactory] = useState([]); // Store Product & Factory data
-  const [selectedProductFactory, setSelectedProductFactory] = useState('All'); // Selected Product & Factory
-  const [types, setTypes] = useState([]); // Store Type data
-  const [selectedType, setSelectedType] = useState('All'); // Selected Type
+  const [productFactory, setProductFactory] = useState([]);
+  const [selectedProductFactory, setSelectedProductFactory] = useState('All');
+  const [types, setTypes] = useState([]);
+  const [selectedType, setSelectedType] = useState('All');
   const [damageTypes, setDamageTypes] = useState([]);
   const [severityTypes, setSeverityTypes] = useState([]);
   const [partDamaged, setPartDamaged] = useState([]);
@@ -30,6 +30,7 @@ const DamageImage = () => {
   const [imageLoading, setImageLoading] = useState(false);
   const [showImageInfo, setShowImageInfo] = useState(false);
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -45,15 +46,15 @@ const DamageImage = () => {
           modelsResponse,
           monthsResponse,
           productFactoryResponse,
-          typeResponse // Fetch Type data
+          typeResponse
         ] = await Promise.all([
           fetch(`${config.BASE_URL}?dataset=getPartsDamaged`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getDamageTypes`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getSeverityTypes`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getModels`, { headers }),
           fetch(`${config.BASE_URL}?dataset=getManfMonth`, { headers }),
-          fetch(`${config.BASE_URL}?dataset=getProductFactory`, { headers }), // Product & Factory API call
-          fetch(`${config.BASE_URL}?dataset=getProductLine`, { headers }) // Type API call
+          fetch(`${config.BASE_URL}?dataset=getProductFactory`, { headers }),
+          fetch(`${config.BASE_URL}?dataset=getProductLine`, { headers })
         ]);
 
         if (
@@ -73,16 +74,16 @@ const DamageImage = () => {
         const severityData = await severityResponse.json();
         const modelsData = await modelsResponse.json();
         const monthsData = await monthsResponse.json();
-        const productFactoryData = await productFactoryResponse.json(); // Product & Factory data
-        const typeData = await typeResponse.json(); // Type data
+        const productFactoryData = await productFactoryResponse.json();
+        const typeData = await typeResponse.json();
 
         setPartDamaged(partsData.data.partDamaged || []);
         setDamageTypes(damageData.data.damageType || []);
         setSeverityTypes(severityData.data.severity || []);
-        setModels([{ title: 'All', value: 'All' }, ...modelsData.data.model.map(model => ({ title: model, value: model }))] || []);
+        setModels(modelsData.data.model || []);
         setManufacturingMonths(monthsData.data.manfMonth || []);
-        setProductFactory(productFactoryData.data.productFactory || []); // Set Product & Factory data
-        setTypes(typeData.data.productLine || []); // Set Type data
+        setProductFactory(productFactoryData.data.productFactory || []);
+        setTypes(typeData.data.productLine || []);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -92,6 +93,106 @@ const DamageImage = () => {
 
     fetchData();
   }, []);
+
+  
+  const handleProductFactoryChange = async (value) => {
+    setSelectedProductFactory(value);
+    setLoading(true);
+
+    
+    setSelectedType('All');
+    setDamageType('All');
+    setDamageSeverity('All');
+    setPartDamagedType('All');
+    setManufacturingMonth('All');
+    setSelectedModels(['All']);
+
+    try {
+      const headers = { 'Content-Type': 'application/json', 'API-Key': config.apiKey };
+
+      const [
+        typeResponse,
+        monthsResponse,
+        damageResponse,
+        severityResponse,
+        partDamagedResponse,
+        modelsResponse
+      ] = await Promise.all([
+        fetch(`${config.BASE_URL}?dataset=getProductLine&getProductFactory=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getManfMonth&getProductFactory=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getDamageTypes&getProductFactory=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getSeverityTypes&getProductFactory=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getPartsDamaged&getProductFactory=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getModels&getProductFactory=${value}`, { headers })
+      ]);
+
+      const typeData = await typeResponse.json();
+      const monthsData = await monthsResponse.json();
+      const damageData = await damageResponse.json();
+      const severityData = await severityResponse.json();
+      const partDamagedData = await partDamagedResponse.json();
+      const modelsData = await modelsResponse.json();
+
+      setTypes(typeData.data.productLine || []);
+      setManufacturingMonths(monthsData.data.manfMonth || []);
+      setDamageTypes(damageData.data.damageType || []);
+      setSeverityTypes(severityData.data.severity || []);
+      setPartDamaged(partDamagedData.data.partDamaged || []);
+      setModels(modelsData.data.model || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
+  const handleTypeChange = async (value) => {
+    setSelectedType(value);
+    setLoading(true);
+
+    
+    setDamageType('All');
+    setDamageSeverity('All');
+    setPartDamagedType('All');
+    setManufacturingMonth('All');
+    setSelectedModels(['All']);
+
+    try {
+      const headers = { 'Content-Type': 'application/json', 'API-Key': config.apiKey };
+
+      const [
+        monthsResponse,
+        damageResponse,
+        severityResponse,
+        partDamagedResponse,
+        modelsResponse
+      ] = await Promise.all([
+        fetch(`${config.BASE_URL}?dataset=getManfMonth&getProductFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getDamageTypes&getProductFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getSeverityTypes&getProductFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getPartsDamaged&getProductFactory=${selectedProductFactory}&productLine=${value}`, { headers }),
+        fetch(`${config.BASE_URL}?dataset=getModels&getProductFactory=${selectedProductFactory}&productLine=${value}`, { headers })
+      ]);
+
+      const monthsData = await monthsResponse.json();
+      const damageData = await damageResponse.json();
+      const severityData = await severityResponse.json();
+      const partDamagedData = await partDamagedResponse.json();
+      const modelsData = await modelsResponse.json();
+
+      
+      setManufacturingMonths(monthsData.data.manfMonth || []);
+      setDamageTypes(damageData.data.damageType || []);
+      setSeverityTypes(severityData.data.severity || []);
+      setPartDamaged(partDamagedData.data.partDamaged || []);
+      setModels(modelsData.data.model || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleModelChange = (value) => {
     if (value.includes('All') && value.length > 1) {
@@ -119,8 +220,8 @@ const DamageImage = () => {
         damageType,
         partDamaged: partDamagedType,
         severity: damageSeverity,
-        productFactory: selectedProductFactory, 
-        productLine: selectedType, 
+        productFactory: selectedProductFactory,
+        productLine: selectedType,
         manufacturingMonth,
         from_booked_date: fromDate ? fromDate.format('YYYY-MM-DD') : '',
         to_booked_date: toDate ? toDate.format('YYYY-MM-DD') : ''
@@ -160,15 +261,15 @@ const DamageImage = () => {
       <Form layout="vertical">
         <Row gutter={16}>
 
-          {/* Product & Factory Dropdown */}
+          
           <Col span={3}>
             <Form.Item label="Product & Factory" required>
               <Select
                 value={selectedProductFactory}
-                onChange={(value) => setSelectedProductFactory(value)}
+                onChange={handleProductFactoryChange}
                 placeholder="Select Product & Factory"
               >
-                <Option value="All">All</Option> {/* Default option to select All */}
+                <Option value="All">All</Option>
                 {productFactory.map((factory) => (
                   <Option key={factory} value={factory}>
                     {factory}
@@ -178,16 +279,16 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          {/* Type Dropdown */}
+          
           <Col span={3}>
             <Form.Item label="Type" required>
               <Select
                 value={selectedType}
-                onChange={(value) => setSelectedType(value)}
+                onChange={handleTypeChange}
                 placeholder="Select Type"
               >
-                <Option value="All">All</Option> {/* Default option to select All */}
-                {types.map((type) => (
+                <Option value="All">All</Option>
+                {Array.isArray(types) && types.map((type) => (
                   <Option key={type} value={type}>
                     {type}
                   </Option>
@@ -200,7 +301,7 @@ const DamageImage = () => {
             <Form.Item label="Manufacturing Month">
               <Select value={manufacturingMonth} onChange={(value) => setManufacturingMonth(value)}>
                 <Option value="All">All</Option>
-                {manufacturingMonths.map(month => (
+                {Array.isArray(manufacturingMonths) && manufacturingMonths.map(month => (
                   <Option key={month} value={month}>{month}</Option>
                 ))}
               </Select>
@@ -211,7 +312,7 @@ const DamageImage = () => {
             <Form.Item label="Damage Type">
               <Select value={damageType} onChange={(value) => setDamageType(value)}>
                 <Option value="All">All</Option>
-                {damageTypes.map(type => (
+                {Array.isArray(damageTypes) && damageTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
                 ))}
               </Select>
@@ -222,7 +323,7 @@ const DamageImage = () => {
             <Form.Item label="Damage Severity">
               <Select value={damageSeverity} onChange={(value) => setDamageSeverity(value)}>
                 <Option value="All">All</Option>
-                {severityTypes.map(type => (
+                {Array.isArray(severityTypes) && severityTypes.map(type => (
                   <Option key={type} value={type}>{type}</Option>
                 ))}
               </Select>
@@ -233,7 +334,7 @@ const DamageImage = () => {
             <Form.Item label="Part Damaged">
               <Select value={partDamagedType} onChange={(value) => setPartDamagedType(value)}>
                 <Option value="All">All</Option>
-                {partDamaged.map(part => (
+                {Array.isArray(partDamaged) && partDamaged.map(part => (
                   <Option key={part} value={part}>{part}</Option>
                 ))}
               </Select>
@@ -248,7 +349,10 @@ const DamageImage = () => {
                 value={selectedModels}
                 treeData={[
                   { title: "All", value: "All" },
-                  ...models.filter(model => model.value !== "All"),
+                  ...(Array.isArray(models) ? models.map(model => ({
+                    title: model,
+                    value: model
+                  })) : [])
                 ]}
                 onChange={handleModelChange}
                 placeholder="Select Models"
@@ -261,7 +365,7 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          {/* Search Images Button beside Model */}
+          
           <Col span={2} style={{ display: 'flex', alignItems: 'center' }}>
             <Button type="primary" onClick={handleSearch}>
               Search Images
