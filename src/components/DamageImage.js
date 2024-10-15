@@ -462,3 +462,7 @@ const DamageImage = () => {
 };
 
 export default DamageImage;
+
+
+
+
