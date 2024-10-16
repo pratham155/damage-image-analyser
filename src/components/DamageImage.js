@@ -100,6 +100,7 @@ const DamageImage = () => {
     setLoading(true);
 
     setImageList([]);
+    setSelectedImage(null);
     
     setSelectedType('All');
     setDamageType('All');
@@ -153,6 +154,7 @@ const DamageImage = () => {
     setLoading(true);
 
     setImageList([]);
+    setSelectedImage(null);
     
     setDamageType('All');
     setDamageSeverity('All');
