@@ -99,6 +99,7 @@ const DamageImage = () => {
     setSelectedProductFactory(value);
     setLoading(true);
 
+    setImageList([]);
     
     setSelectedType('All');
     setDamageType('All');
@@ -151,6 +152,7 @@ const DamageImage = () => {
     setSelectedType(value);
     setLoading(true);
 
+    setImageList([]);
     
     setDamageType('All');
     setDamageSeverity('All');
