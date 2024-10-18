@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
-import { Layout, Button, Input, Spin, Typography } from 'antd';
+import { Layout, Button, Input, Spin, Typography, Select, Form, Row, Col } from 'antd';
 import { UserOutlined, RobotOutlined, SendOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';  
@@ -11,12 +11,13 @@ import './DamageImageChat.css';
 
 const { Content } = Layout;
 const { TextArea } = Input;
+const { Option } = Select;
 
 const predefinedQuestions = [
-  "Provide a summary by damage type for dishwasher",
-  "Provide a summary by part damage for dishwasher",
-  "Provide a summary by damage Severity for dishwasher",
-  "Which models have the most damage"
+  "Provide a summary by damage type",
+  "Provide a summary by part damaged",
+  "Provide a summary by damage Severity",
+  "Which models have the most damages"
 ];
 
 const Message = memo(({ type, text }) => (
@@ -65,75 +66,90 @@ const DamageImageChat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [productFactory, setProductFactory] = useState([]);  // Product & Factory list
+  const [selectedProductFactory, setSelectedProductFactory] = useState('DISHWASHER'); // Selected Product & Factory
 
-  
-  const injectGraph = useCallback((graphData, id) => {
-    if (graphData) {
-      // const svg = d3.select(`#graph-placeholder`);
-      const svg = d3.select(`#${id}`)
-      svg.selectAll('*').remove(); 
-      
-
-const margin = { top: 20, right: 30, bottom: 50, left: 40 };
-
-
-const width =800;
-const height = 400;
-
-const svgElement = svg.append('svg')
-  .attr('width', width)
-  .attr('height', height);
-
-
-const x = d3.scaleBand()
-  .domain(graphData.map(d => d.label))
-  .range([margin.left, width - margin.right])
-  .padding(0.1);
-
-const y = d3.scaleLinear()
-  .domain([0, d3.max(graphData, d => d.value)])
-  .nice()
-  .range([height - margin.bottom, margin.top]);
-
-// Append bars
-svgElement.append('g')
-  .selectAll('rect')
-  .data(graphData)
-  .enter().append('rect')
-  .attr('x', d => x(d.label))
-  .attr('y', d => y(d.value))
-  .attr('height', d => y(0) - y(d.value))
-  .attr('width', x.bandwidth())
-  .attr('fill', '#69b3a2');
-
-
-svgElement.append('g')
-  .selectAll('text')
-  .data(graphData)
-  .enter().append('text')
-  .attr('x', d => x(d.label) + x.bandwidth() / 2) 
-  .attr('y', d => y(d.value) - 5) 
-  .attr('text-anchor', 'middle') 
-  .text(d => d.value) 
-  .style('fill', 'black') 
-  .style('font-size', '12px'); 
-
-
-svgElement.append('g')
-  .attr('transform', `translate(0,${height - margin.bottom})`)
-  .call(d3.axisBottom(x))
-  .selectAll('text')
-  .style('text-anchor', 'end') 
-  .style('font-size', '10px')
-  .attr('transform', 'rotate(-25)');
-
-svgElement.append('g')
-  .attr('transform', `translate(${margin.left},0)`)
-  .call(d3.axisLeft(y));
-
-    }
+  // Fetch product factories from the API
+  useEffect(() => {
+    const fetchProductFactories = async () => {
+      try {
+        const response = await axios.get(
+          'https://fulfillment-ai-dev.appl.ge.com/damage_assistant/?dataset=getProductFactorySearch',
+          { headers: { 'Content-Type': 'application/json', 'api-key': config.apiKey } }
+        );
+        const data = response.data;
+        if (data && data.status === 'success') {
+          setProductFactory(data.data.productFactory || []);
+        }
+      } catch (error) {
+        console.error('Error fetching product factories', error);
+      }
+    };
+    fetchProductFactories();
   }, []);
 
+  // Handle Product & Factory change
+  const handleProductFactoryChange = (value) => {
+    setSelectedProductFactory(value);
+  };
+
+  const injectGraph = useCallback((graphData, id) => {
+    if (graphData) {
+      const svg = d3.select(`#${id}`);
+      svg.selectAll('*').remove(); 
+
+      const margin = { top: 20, right: 30, bottom: 50, left: 40 };
+      const width =800;
+      const height = 400;
+
+      const svgElement = svg.append('svg')
+        .attr('width', width)
+        .attr('height', height);
+
+      const x = d3.scaleBand()
+        .domain(graphData.map(d => d.label))
+        .range([margin.left, width - margin.right])
+        .padding(0.1);
+
+      const y = d3.scaleLinear()
+        .domain([0, d3.max(graphData, d => d.value)])
+        .nice()
+        .range([height - margin.bottom, margin.top]);
+
+      svgElement.append('g')
+        .selectAll('rect')
+        .data(graphData)
+        .enter().append('rect')
+        .attr('x', d => x(d.label))
+        .attr('y', d => y(d.value))
+        .attr('height', d => y(0) - y(d.value))
+        .attr('width', x.bandwidth())
+        .attr('fill', '#69b3a2');
+
+      svgElement.append('g')
+        .selectAll('text')
+        .data(graphData)
+        .enter().append('text')
+        .attr('x', d => x(d.label) + x.bandwidth() / 2) 
+        .attr('y', d => y(d.value) - 5) 
+        .attr('text-anchor', 'middle') 
+        .text(d => d.value) 
+        .style('fill', 'black') 
+        .style('font-size', '12px'); 
+
+      svgElement.append('g')
+        .attr('transform', `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x))
+        .selectAll('text')
+        .style('text-anchor', 'end') 
+        .style('font-size', '10px')
+        .attr('transform', 'rotate(-25)');
+
+      svgElement.append('g')
+        .attr('transform', `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y));
+    }
+  }, []);
 
   const handleQuestionClick = useCallback(async (index) => {
     const question = predefinedQuestions[index];
@@ -144,14 +160,15 @@ svgElement.append('g')
 
     try {
       setLoading(true);
-      const response = await axios.get(config.BASE_URL, {
+      const response = await axios.get('https://fulfillment-ai-dev.appl.ge.com/damage_assistant/', {
         headers: {
           'content-type': 'application/json',
           'api-key': config.apiKey
         },
         params: {
           dataset: 'search',
-          prompt: question
+          prompt: question,
+          productFactory: selectedProductFactory  // Include the selected Product & Factory
         }
       });
 
@@ -171,7 +188,7 @@ svgElement.append('g')
     } finally {
       setLoading(false);
     }
-  }, [injectGraph]);
+  }, [injectGraph, selectedProductFactory]);
 
   const handleSend = useCallback(async () => {
     if (input.trim()) {
@@ -185,14 +202,15 @@ svgElement.append('g')
 
       try {
         setLoading(true);
-        const response = await axios.get(config.BASE_URL, {
+        const response = await axios.get('https://fulfillment-ai-dev.appl.ge.com/damage_assistant/', {
           headers: {
             'content-type': 'application/json',
             'api-key': config.apiKey
           },
           params: {
             dataset: 'search',
-            prompt: currentInput
+            prompt: currentInput,
+            productFactory: selectedProductFactory  // Include the selected Product & Factory
           }
         });
 
@@ -213,7 +231,7 @@ svgElement.append('g')
         setLoading(false);
       }
     }
-  }, [input, injectGraph]);
+  }, [input, injectGraph, selectedProductFactory]);
 
   const handleInputChange = useCallback((e) => {
     setInput(e.target.value);
@@ -222,21 +240,47 @@ svgElement.append('g')
   return (
     <Layout className="chat-layout">
       <Content className="chat-content">
-        <div className="question-buttons">
-          {predefinedQuestions.map((question, index) => (
-            <Button
-              key={index}
-              className="question-button"
-              onClick={() => handleQuestionClick(index)}
-            >
-              <p>{question}</p>
-            </Button>
-          ))}
-        </div>
+        <Row gutter={16}>
+          {/* Product & Factory Dropdown */}
+          <Col span={4}>
+            <Form.Item label="Product & Factory" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} required>
+              <Select
+                value={selectedProductFactory}
+                onChange={handleProductFactoryChange}
+                placeholder="Select Product & Factory"
+                style={{ width: '100%' }}
+              >
+                {/* <Option value="DISHWASHER">DISHWASHER</Option> */}
+                {productFactory.map((factory) => (
+                  <Option key={factory} value={factory}>
+                    {factory}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+
+          <Col span={18}>
+            <div className="question-buttons">
+              {predefinedQuestions.map((question, index) => (
+                <Button
+                  key={index}
+                  className="question-button"
+                  onClick={() => handleQuestionClick(index)}
+                >
+                  <p>{question}</p>
+                </Button>
+              ))}
+            </div>
+          </Col>
+        </Row>
+        
         <Typography.Paragraph style={{ margin: '2px 0', textAlign: 'center', color: '#1C4E80' }}>
           As an AI Agent, I am here to assist you with the analysis of damages. A few sample prompts have been provided above for your reference. Please feel free to enter your prompts directly in the box below.
         </Typography.Paragraph>
+        
         <MessageList messages={messages} loading={loading} />
+        
         <div className="chat-input">
           <TextArea
             rows={2}
@@ -257,7 +301,6 @@ svgElement.append('g')
   );
 };
 
-
 const convertJsonToMarkdown = (data) => {
   let markdown = '';
   let graphData = null;
@@ -276,11 +319,9 @@ const convertJsonToMarkdown = (data) => {
 
       markdown += "\n"
 
-      
       if (!isGraphRendered) {
         divId = `graph-placeholder-${item.type}-${Math.random().toString(36).substring(7)}`;
         markdown += `<div id="${divId}"></div>\n\n`;
-
 
         graphData = item.rows.map(row => ({
           label: row[0],  
@@ -294,6 +335,5 @@ const convertJsonToMarkdown = (data) => {
 
   return { markdown, graphData, divId };
 };
-
 
 export default DamageImageChat;
