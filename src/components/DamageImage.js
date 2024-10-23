@@ -18,7 +18,7 @@ import config from "./config";
 import "./DamageImage.css";
 import jsPDF from "jspdf";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -315,36 +315,43 @@ const DamageImage = () => {
   const downloadPdf = async () => {
     const pdf = new jsPDF();
     const corsProxyUrl = "https://cors-anywhere.herokuapp.com/";
-  
+
     const paddingX = 10;
-    const paddingY = 10; 
-    const marginBetweenImages = 10; 
-  
+    const paddingY = 10;
+    const marginBetweenImages = 10;
+
     pdf.text(`Title: ${selectedImage.title1}`, paddingX, paddingY + 10);
-    pdf.text(`Damage Type: ${selectedImage.damageType}`, paddingX, paddingY + 20);
+    pdf.text(
+      `Damage Type: ${selectedImage.damageType}`,
+      paddingX,
+      paddingY + 20
+    );
     pdf.text(`Severity: ${selectedImage.severity}`, paddingX, paddingY + 30);
-    pdf.text(`Part Damaged: ${selectedImage.partDamaged}`, paddingX, paddingY + 40);
-  
+    pdf.text(
+      `Part Damaged: ${selectedImage.partDamaged}`,
+      paddingX,
+      paddingY + 40
+    );
+
     const imageWidth = 140;
-    const imageHeight = 120; 
-  
+    const imageHeight = 120;
+
     for (let i = 0; i < selectedImage.path.length; i++) {
       const imgUrl = `${corsProxyUrl}${selectedImage.path[i].path}`;
-      const imageTitle = selectedImage.path[i].title;  
+      const imageTitle = selectedImage.path[i].title;
       try {
-        const imgData = await loadImageToBase64(imgUrl);    
-        const x = paddingX; 
-        const y = paddingY + 50 + i * (imageHeight  + marginBetweenImages); 
+        const imgData = await loadImageToBase64(imgUrl);
+        const x = paddingX;
+        const y = paddingY + 50 + i * (imageHeight + marginBetweenImages);
         pdf.text(`Image Title: ${imageTitle}`, x, y);
         pdf.addImage(imgData, "JPEG", x, y, imageWidth, imageHeight);
       } catch (err) {
         console.error(`Failed to load image: ${imgUrl}`, err);
       }
     }
-  
+
     pdf.save(`${selectedImage.title1}.pdf`);
   };
-  
 
   const loadImageToBase64 = (url) => {
     return new Promise((resolve, reject) => {
@@ -375,7 +382,6 @@ const DamageImage = () => {
 
   return (
     <div className="images-component">
-    
       <Form layout="vertical">
         <div className="form-row">
           <div className="form-col form-col-3">
@@ -599,7 +605,7 @@ const DamageImage = () => {
                       {selectedImage.title1 || selectedImage.title}
                     </h2>
                     <Button className="download-button" onClick={downloadPdf}>
-                    <FontAwesomeIcon icon={faCloudArrowDown} /> Download
+                      <FontAwesomeIcon icon={faCloudArrowDown} /> Download
                     </Button>
                   </div>
                   {showImageInfo && (
