@@ -16,9 +16,6 @@ import {
 import { InfoCircleOutlined } from "@ant-design/icons";
 import config from "./config";
 import "./DamageImage.css";
-import jsPDF from "jspdf";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -45,7 +42,6 @@ const DamageImage = () => {
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
   const [showImageInfo, setShowImageInfo] = useState(false);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -312,79 +308,13 @@ const DamageImage = () => {
     setShowImageInfo(true);
   };
 
-  const downloadPdf = async () => {
-    const pdf = new jsPDF();
-    const corsProxyUrl = "https://cors-anywhere.herokuapp.com/";
-
-    const paddingX = 10;
-    const paddingY = 10;
-    const marginBetweenImages = 10;
-
-    pdf.text(`Title: ${selectedImage.title1}`, paddingX, paddingY + 10);
-    pdf.text(
-      `Damage Type: ${selectedImage.damageType}`,
-      paddingX,
-      paddingY + 20
-    );
-    pdf.text(`Severity: ${selectedImage.severity}`, paddingX, paddingY + 30);
-    pdf.text(
-      `Part Damaged: ${selectedImage.partDamaged}`,
-      paddingX,
-      paddingY + 40
-    );
-
-    const imageWidth = 140;
-    const imageHeight = 120;
-
-    for (let i = 0; i < selectedImage.path.length; i++) {
-      const imgUrl = `${corsProxyUrl}${selectedImage.path[i].path}`;
-      const imageTitle = selectedImage.path[i].title;
-      try {
-        const imgData = await loadImageToBase64(imgUrl);
-        const x = paddingX;
-        const y = paddingY + 50 + i * (imageHeight + marginBetweenImages);
-        pdf.text(`Image Title: ${imageTitle}`, x, y);
-        pdf.addImage(imgData, "JPEG", x, y, imageWidth, imageHeight);
-      } catch (err) {
-        console.error(`Failed to load image: ${imgUrl}`, err);
-      }
-    }
-
-    pdf.save(`${selectedImage.title1}.pdf`);
-  };
-
-  const loadImageToBase64 = (url) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.src = url;
-
-      img.onload = () => {
-        try {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
-
-          const imgData = canvas.toDataURL("image/jpeg");
-          resolve(imgData);
-        } catch (err) {
-          reject(err);
-        }
-      };
-
-      img.onerror = (err) => {
-        reject(new Error(`Failed to load image: ${url}`));
-      };
-    });
-  };
+ 
 
   return (
     <div className="images-component">
-      <Form layout="vertical">
-        <div className="form-row">
-          <div className="form-col form-col-3">
+      <Form layout="vertical" >
+        <Row gutter={24} style={{marginLeft:'0px',marginRight:'0px'}}>
+          <Col span={4}>
             <Form.Item label="Product & Factory" required>
               <Select
                 value={selectedProductFactory}
@@ -399,9 +329,9 @@ const DamageImage = () => {
                 ))}
               </Select>
             </Form.Item>
-          </div>
+          </Col>
 
-          <div className="form-col form-col-3">
+          <Col span={3}>
             <Form.Item label="Type" required>
               <Select
                 value={selectedType}
@@ -417,10 +347,10 @@ const DamageImage = () => {
                   ))}
               </Select>
             </Form.Item>
-          </div>
+          </Col>
 
-          <div className="form-col form-col-3">
-            <Form.Item label="Manufacturing Month">
+          <Col span={3}>
+            <Form.Item label="Manf Month">
               <Select
                 value={manufacturingMonth}
                 onChange={(value) => setManufacturingMonth(value)}
@@ -434,9 +364,9 @@ const DamageImage = () => {
                   ))}
               </Select>
             </Form.Item>
-          </div>
+          </Col>
 
-          <div className="form-col form-col-3">
+          <Col span={3}>
             <Form.Item label="Damage Type">
               <Select
                 value={damageType}
@@ -451,9 +381,9 @@ const DamageImage = () => {
                   ))}
               </Select>
             </Form.Item>
-          </div>
+          </Col>
 
-          <div className="form-col form-col-3">
+          <Col span={3}>
             <Form.Item label="Damage Severity">
               <Select
                 value={damageSeverity}
@@ -468,9 +398,9 @@ const DamageImage = () => {
                   ))}
               </Select>
             </Form.Item>
-          </div>
+          </Col>
 
-          <div className="form-col form-col-3">
+          <Col span={3}>
             <Form.Item label="Part Damaged">
               <Select
                 value={partDamagedType}
@@ -485,9 +415,9 @@ const DamageImage = () => {
                   ))}
               </Select>
             </Form.Item>
-          </div>
+          </Col>
 
-          <div className="form-col form-col-3">
+          <Col span={3}>
             <Form.Item label="Model">
               <TreeSelect
                 treeCheckable={true}
@@ -513,9 +443,9 @@ const DamageImage = () => {
                 }
               />
             </Form.Item>
-          </div>
+          </Col>
 
-          <div className="form-col form-col-3">
+          <Col span={5}>
             <ConfigProvider
               theme={{ token: { colorPrimary: "#1890ff", colorText: "black" } }}
             >
@@ -542,14 +472,13 @@ const DamageImage = () => {
                 />
               </Form.Item>
             </ConfigProvider>
-          </div>
-
-          <div className="form-col form-col-12 form-btn">
+          </Col>
+          <Col span={2} style={{ display: "flex", alignItems: "center" }}>
             <Button type="primary" onClick={handleSearch}>
               Search Images
             </Button>
-          </div>
-        </div>
+          </Col>
+        </Row>
       </Form>
 
       {loading ? (
@@ -588,25 +517,12 @@ const DamageImage = () => {
             )}
             {selectedImage && (
               <>
-                {/* <div className="selected-image">
-                  <h2 className="image-title">{selectedImage.title1 || selectedImage.title}</h2>
-                  <Button onClick={downloadPdf}>Download </Button>
-                  {Array.isArray(selectedImage.path) && selectedImage.path.map((img, index) => (
-                    <div key={index}>
-                      <h3>{img.title}</h3>
-                      <img src={img.path} alt={img.title} onLoad={handleImageLoad} />
-                    </div>
-                  ))}
-                </div> */}
-
                 <div className="image-gallery">
                   <div className="selected-image-header">
                     <h2 className="image-title">
                       {selectedImage.title1 || selectedImage.title}
                     </h2>
-                    <Button className="download-button" onClick={downloadPdf}>
-                      <FontAwesomeIcon icon={faCloudArrowDown} /> Download
-                    </Button>
+                    
                   </div>
                   {showImageInfo && (
                     <div className="image-info" style={{ marginLeft: "20px" }}>
