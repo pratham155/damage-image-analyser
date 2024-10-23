@@ -331,7 +331,7 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={3}>
+          <Col span={4}>
             <Form.Item label="Type" required>
               <Select
                 value={selectedType}
@@ -417,7 +417,7 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={3}>
+          <Col span={4}>
             <Form.Item label="Model">
               <TreeSelect
                 treeCheckable={true}
