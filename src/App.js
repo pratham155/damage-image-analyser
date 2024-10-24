@@ -26,7 +26,6 @@ const App = () => {
     );
   };
 
-
   const toggleDropdown = async (visible) => {
     setnotificationLoader(true);
     setDropdownVisible(visible); // Update the state based on dropdown visibility
@@ -46,8 +45,7 @@ const App = () => {
       } catch (error) {
         console.error("Error fetching data", error);
       }
-    } 
-  
+    }
   };
 
   const menu = (
@@ -93,12 +91,11 @@ const App = () => {
           );
         })
       ) : (
-        <Empty description='No Notifications' />
+        <Empty description="No Notifications" />
       )}
     </Card>
   );
 
-  
   return (
     <Router>
       <Layout>
