@@ -350,7 +350,7 @@ const DamageImage = () => {
           </Col>
 
           <Col span={3}>
-            <Form.Item label="Manf Month">
+            <Form.Item label="Mfg Month">
               <Select
                 value={manufacturingMonth}
                 onChange={(value) => setManufacturingMonth(value)}
