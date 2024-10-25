@@ -16,11 +16,11 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 const predefinedQuestions = [
-  "Provide a summary by damage type for dishwasher",
-  "Provide a summary by part damage for dishwasher",
-  "Provide a summary by damage Severity for dishwasher",
-  "Which models have the most damage",
-];
+  "Provide a summary by damage type",
+   "Provide a summary by part damaged",
+   "Provide a summary by damage Severity",
+   "Which models have the most damages"
+ ];
 
 const Message = memo(({ type, text }) => (
   <div className={`message ${type}`}>
@@ -71,8 +71,8 @@ const DamageImageChat = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [productFactory, setProductFactory] = useState([]);  // Product & Factory list
-  const [selectedProductFactory, setSelectedProductFactory] = useState('DISHWASHER'); // Selected Product & Factory
+  const [productFactory, setProductFactory] = useState([]);  
+  const [selectedProductFactory, setSelectedProductFactory] = useState('DISHWASHER'); 
 
   // Fetch product factories from the API
   useEffect(() => {
@@ -93,7 +93,6 @@ const DamageImageChat = () => {
     fetchProductFactories();
   }, []);
 
-  // Handle Product & Factory change
   const handleProductFactoryChange = (value) => {
     setSelectedProductFactory(value);
     
