@@ -74,24 +74,24 @@ const DamageImageChat = () => {
   const [productFactory, setProductFactory] = useState([]);  
   const [selectedProductFactory, setSelectedProductFactory] = useState('DISHWASHER'); 
 
-  // Fetch product factories from the API
-  useEffect(() => {
-    const fetchProductFactories = async () => {
-      try {
-        const response = await axios.get(
-          'https://fulfillment-ai-dev.appl.ge.com/damage_assistant/?dataset=getProductFactorySearch',
-          { headers: { 'Content-Type': 'application/json', 'api-key': config.apiKey } }
-        );
-        const data = response.data;
-        if (data && data.status === 'success') {
-          setProductFactory(data.data.productFactory || []);
-        }
-      } catch (error) {
-        console.error('Error fetching product factories', error);
+ // Fetch product factories from the API
+useEffect(() => {
+  const fetchProductFactories = async () => {
+    try {
+      const response = await axios.get(
+        `${config.BASE_URL}?dataset=getProductFactorySearch`, 
+        { headers: { 'Content-Type': 'application/json', 'api-key': config.apiKey } }
+      );
+      const data = response.data;
+      if (data && data.status === 'success') {
+        setProductFactory(data.data.productFactory || []);
       }
-    };
-    fetchProductFactories();
-  }, []);
+    } catch (error) {
+      console.error('Error fetching product factories', error);
+    }
+  };
+  fetchProductFactories();
+}, []);
 
   const handleProductFactoryChange = (value) => {
     setSelectedProductFactory(value);
@@ -321,6 +321,7 @@ const DamageImageChat = () => {
                   onClick={() => handleQuestionClick(index)}
                 >
                   <p>{question}</p>
+                  
                 </Button>
               ))}
             </div>
