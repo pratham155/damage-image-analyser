@@ -28,7 +28,7 @@ body, html, #root {
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
-    margin-bottom: 20px;
+    padding-top: 20px;
   }
   
   .question-button {
@@ -141,3 +141,18 @@ body, html, #root {
     text-align: left;
   }
   
+.export-button{
+    background-color: #4cAF50;
+    color: white;
+    border: none;
+    padding: 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+  
+
+}
