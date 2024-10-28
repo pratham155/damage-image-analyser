@@ -79,7 +79,7 @@ const DamageImageChat = () => {
     const fetchProductFactories = async () => {
       try {
         const response = await axios.get(
-          'https://fulfillment-ai-dev.appl.ge.com/damage_assistant/?dataset=getProductFactorySearch',
+          `${config.BASE_URL}?dataset=getProductFactorySearch`,
           { headers: { 'Content-Type': 'application/json', 'api-key': config.apiKey } }
         );
         const data = response.data;
