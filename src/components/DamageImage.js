@@ -39,6 +39,7 @@ const DamageImage = () => {
   const [toDate, setToDate] = useState(null);
   const [imageList, setImageList] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [model, setModel] = useState('All');
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
   const [showImageInfo, setShowImageInfo] = useState(false);
@@ -417,7 +418,7 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={4}>
+          <Col span={3}>
             <Form.Item label="Model">
               <TreeSelect
                 treeCheckable={true}
