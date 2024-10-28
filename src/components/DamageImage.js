@@ -313,7 +313,7 @@ const DamageImage = () => {
 
   return (
     <div className="images-component">
-      <Form layout="vertical" >
+     <Form layout="vertical" >
         <Row gutter={24} style={{marginLeft:'0px',marginRight:'0px'}}>
           <Col span={4}>
             <Form.Item label="Product & Factory" required>
@@ -418,7 +418,7 @@ const DamageImage = () => {
             </Form.Item>
           </Col>
 
-          <Col span={3}>
+          <Col span={4}>
             <Form.Item label="Model">
               <TreeSelect
                 treeCheckable={true}
