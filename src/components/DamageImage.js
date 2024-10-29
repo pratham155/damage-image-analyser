@@ -16,6 +16,9 @@ import {
 import { InfoCircleOutlined } from "@ant-design/icons";
 import config from "./config";
 import "./DamageImage.css";
+import jsPDF from "jspdf";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -43,6 +46,8 @@ const DamageImage = () => {
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
   const [showImageInfo, setShowImageInfo] = useState(false);
+  const [imageDownloadLoading, setImageDownloadLoading] = useState(false);
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -309,7 +314,95 @@ const DamageImage = () => {
     setShowImageInfo(true);
   };
 
- 
+  const download = async() => {
+    const originalImage = "https://storage.googleapis.com/customernet-prd/CustomerNet/ReturnAndCredit/Returns/3493842/1051970694/1051970694-GDT650SYVFS-FZ758988-1718905582778.jpg?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=fulfilprd-485662822083%40fulfilai-fulfillment-p-1-b6ad.iam.gserviceaccount.com%2F20241029%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20241029T051523Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=93f3a7093c76af291ac7d49a4fa19c0883baa88150e92f8c44dfbdd673f7742d09440b4f0c763ab6b40b840c4303cd83fef705a3dcece0117e99c37e066dd27c9136aaa59a6a3ad1ebaabb0785621ac85361ea89cfcfcce3ea75b05d026cd6a224a6aad3eab5967ebf4c42f869f2958f827343393311052c2e94739762ba91911a056cd8bca8a5f6f4f475019766472a32ab9ff2ea2b2deb8229c4d818b55cfc08c8d26bc43dfd50729dc24359b510b0c6fc4801ca05e26882a3c33aa38b413519dcd7c161b65911180d51c7741038a72d47e0b6801b27c27b5d3847243b7ef692f12fe3c056d352dbf7eab50c53b26954e270852db91e45593dbb5b096b200f";
+    const image = await fetch(originalImage);
+
+    // Split image name
+    const nameSplit = originalImage.split("/");
+    const  duplicateName = nameSplit.pop();
+
+    const imageBlog = await image.blob()
+    const imageURL = URL.createObjectURL(imageBlog)
+    const link = document.createElement('a')
+    link.href = imageURL;
+    link.download = "" + duplicateName + "";
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+};
+
+const downloadPdf = async () => {
+  const pdf = new jsPDF();
+  // const corsProxyUrl = "https://cors-anywhere.herokuapp.com/";
+  setImageDownloadLoading(true);
+
+  const paddingX = 10;
+  const paddingY = 10;
+  const marginBetweenImages = 10;
+
+  pdf.text(`Title: ${selectedImage.title1}`, paddingX, paddingY + 10);
+  pdf.text(
+    `Damage Type: ${selectedImage.damageType}`,
+    paddingX,
+    paddingY + 20
+  );
+  pdf.text(`Severity: ${selectedImage.severity}`, paddingX, paddingY + 30);
+  pdf.text(
+    `Part Damaged: ${selectedImage.partDamaged}`,
+    paddingX,
+    paddingY + 40
+  );
+
+  const imageWidth = 110;
+  const imageHeight = 110;
+
+  for (let i = 0; i < selectedImage.path.length; i++) {
+    const imgUrl = `${selectedImage.path[i].path}`;
+    console.log(imgUrl, "");
+
+    const imageTitle = selectedImage.path[i].title;
+    try {
+      const imgData = await loadImageToBase64(imgUrl);
+      const x = paddingX;
+      const y = paddingY + 40 + i * (imageHeight + marginBetweenImages);
+      pdf.text(`Image Title: ${imageTitle}`, x, y);
+      pdf.addImage(imgData, "JPEG", x, y, imageWidth, imageHeight);
+    } catch (err) {
+      console.error(`Failed to load image: ${imgUrl}`, err);
+    }
+  }
+
+  pdf.save(`${selectedImage.title1}.pdf`);
+  setImageDownloadLoading(false);
+};
+
+const loadImageToBase64 = (url) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = url;
+
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const imgData = canvas.toDataURL("image/jpeg");
+        resolve(imgData);
+      } catch (err) {
+        reject(err);
+      }
+    };
+
+    img.onerror = (err) => {
+      reject(new Error(`Failed to load image: ${url}`));
+    };
+  });
+};
 
   return (
     <div className="images-component">
@@ -523,7 +616,11 @@ const DamageImage = () => {
                     <h2 className="image-title">
                       {selectedImage.title1 || selectedImage.title}
                     </h2>
-                    
+                    <Button className="download-button" onClick={downloadPdf}>
+                      <FontAwesomeIcon icon={faCloudArrowDown} /> Download
+                    </Button>
+ 
+                   
                   </div>
                   {showImageInfo && (
                     <div className="image-info" style={{ marginLeft: "20px" }}>
