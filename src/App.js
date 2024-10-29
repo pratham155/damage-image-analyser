@@ -1,16 +1,30 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import { Layout, Menu, Avatar, Dropdown, Card, Skeleton, Empty } from "antd";
+import {
+  Layout,
+  Menu,
+  Avatar,
+  Dropdown,
+  Card,
+  Skeleton,
+  Empty,
+  Tooltip,
+} from "antd";
 import {
   PictureOutlined,
   MessageOutlined,
   UserOutlined,
   BellOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import DamageImage from "./components/DamageImage";
 import DamageImageChat from "./components/DamageImageChat";
 import "./App.css";
 import config from "./components/config";
+import GettingStarted from "./components/GettingStarted";
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
+
 
 const { Header, Content } = Layout;
 
@@ -117,20 +131,32 @@ const App = () => {
             </Menu.Item>
           </Menu>
           <div className="user-profile">
+            <Tooltip title="Getting Started">
+              <Link to="/getting-started">
+                <Avatar
+                  size="large"
+                  style={{ marginRight: "10px", cursor: "pointer" }}
+                  icon={<HomeOutlined />}
+                />
+              </Link>
+            </Tooltip>
             <Dropdown
               overlay={menu}
               trigger={["click"]}
               placement="bottomRight"
               onVisibleChange={toggleDropdown}
             >
-              <Avatar
-                size="large"
-                style={{ marginRight: "10px", cursor: "pointer" }}
-                icon={<BellOutlined />}
-              />
+              <Tooltip title="Notification">
+                <Avatar
+                  size="large"
+                  style={{ marginRight: "10px", cursor: "pointer" }}
+                  icon={<BellOutlined />}
+                />
+              </Tooltip>
             </Dropdown>
-
-            <Avatar size="large" icon={<UserOutlined />} />
+            <Tooltip title="Profile">
+              <Avatar size="large" style={{  cursor: "pointer" }} icon={<UserOutlined />} />
+            </Tooltip>
           </div>
         </Header>
         <Content className="app-content">
@@ -138,6 +164,7 @@ const App = () => {
             <Route path="/" element={<DamageImageChat />} />
             <Route path="/conversation" element={<DamageImageChat />} />
             <Route path="/damage-image" element={<DamageImage />} />
+            <Route path="/getting-started" element={<GettingStarted />} />
           </Routes>
         </Content>
         <div className="feedback-button" onClick={handleFeedbackClick}>

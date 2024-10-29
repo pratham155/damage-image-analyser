@@ -1,0 +1,35 @@
+.pdf-container {
+    /* padding: 20px; */
+    max-width: 80vw;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .pdf-button {
+    margin: 20px 0;
+  }
+  
+  .pdf-wrapper {
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+    height: 80vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .pdf-page {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  .back-button {
+      margin-top: 70px;
+      position: absolute;
+      top: 20px;
+      left: 20px; /* Placing the button in the top-left corner */
+      z-index: 100;
+    }
