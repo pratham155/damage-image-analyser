@@ -20,7 +20,7 @@ import {
   Row,
   Col,
 } from "antd";
-import Highcharts from "highcharts";
+
 
 const { Content } = Layout;
 const { TextArea } = Input;
