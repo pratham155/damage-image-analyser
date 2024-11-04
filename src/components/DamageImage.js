@@ -42,11 +42,11 @@ const DamageImage = () => {
   const [toDate, setToDate] = useState(null);
   const [imageList, setImageList] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [model, setModel] = useState('All');
+  const [model, setModel] = useState("All");
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
   const [showImageInfo, setShowImageInfo] = useState(false);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -313,41 +313,37 @@ const DamageImage = () => {
     setShowImageInfo(true);
   };
 
+  const loadImageToBase64 = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = url;
 
+      img.onload = () => {
+        try {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
 
+          const imgData = canvas.toDataURL("image/jpeg");
+          resolve(imgData);
+        } catch (err) {
+          reject(err);
+        }
+      };
 
-
-const loadImageToBase64 = (url) => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = url;
-
-    img.onload = () => {
-      try {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-
-        const imgData = canvas.toDataURL("image/jpeg");
-        resolve(imgData);
-      } catch (err) {
-        reject(err);
-      }
-    };
-
-    img.onerror = (err) => {
-      reject(new Error(`Failed to load image: ${url}`));
-    };
-  });
-};
+      img.onerror = (err) => {
+        reject(new Error(`Failed to load image: ${url}`));
+      };
+    });
+  };
 
   return (
     <div className="images-component">
-     <Form layout="vertical" >
-        <Row gutter={24} style={{marginLeft:'0px',marginRight:'0px'}}>
+      <Form layout="vertical">
+        <Row gutter={24} style={{ marginLeft: "0px", marginRight: "0px" }}>
           <Col span={4}>
             <Form.Item label="Product & Factory" required>
               <Select
@@ -556,9 +552,6 @@ const loadImageToBase64 = (url) => {
                     <h2 className="image-title">
                       {selectedImage.title1 || selectedImage.title}
                     </h2>
-                   
- 
-                   
                   </div>
                   {showImageInfo && (
                     <div className="image-info" style={{ marginLeft: "20px" }}>
@@ -571,6 +564,17 @@ const loadImageToBase64 = (url) => {
                       <p>
                         <strong>Part Damaged:</strong>{" "}
                         {selectedImage.partDamaged}
+                      </p>
+                      <p>
+                        <strong>Type:</strong>{" "}
+                        {selectedImage.type
+                          .toLowerCase()
+                          .split(" ")
+                          .map(
+                            (word) =>
+                              word.charAt(0).toUpperCase() + word.slice(1)
+                          )
+                          .join("")}
                       </p>
                     </div>
                   )}
