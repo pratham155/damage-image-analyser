@@ -16,6 +16,7 @@ import {
   UserOutlined,
   BellOutlined,
   HomeOutlined,
+  RightCircleOutlined,
 } from "@ant-design/icons";
 import DamageImage from "./components/DamageImage";
 import DamageImageChat from "./components/DamageImageChat";
@@ -136,7 +137,7 @@ const App = () => {
                 <Avatar
                   size="large"
                   style={{ marginRight: "10px", cursor: "pointer" }}
-                  icon={<HomeOutlined />}
+                  icon={<RightCircleOutlined />}
                 />
               </Link>
             </Tooltip>
