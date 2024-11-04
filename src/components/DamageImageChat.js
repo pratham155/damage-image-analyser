@@ -8,8 +8,19 @@ import { saveAs } from "file-saver";
 import rehypeRaw from "rehype-raw";
 import { v4 as uuidv4 } from "uuid";
 import "./DamageImageChat.css";
-import * as d3 from 'd3';
-import { Layout, Button, Input, Spin, Typography, Select, Form, Row, Col } from 'antd';
+import * as d3 from "d3";
+import {
+  Layout,
+  Button,
+  Input,
+  Spin,
+  Typography,
+  Select,
+  Form,
+  Row,
+  Col,
+} from "antd";
+
 
 const { Content } = Layout;
 const { TextArea } = Input;
@@ -17,10 +28,10 @@ const { Option } = Select;
 
 const predefinedQuestions = [
   "Provide a summary by damage type",
-   "Provide a summary by part damaged",
-   "Provide a summary by damage Severity",
-   "Which models have the most damages"
- ];
+  "Provide a summary by part damaged",
+  "Provide a summary by damage Severity",
+  "Which models have the most damages",
+];
 
 const Message = memo(({ type, text }) => (
   <div className={`message ${type}`}>
@@ -71,136 +82,159 @@ const DamageImageChat = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [productFactory, setProductFactory] = useState([]);  
-  const [selectedProductFactory, setSelectedProductFactory] = useState('DISHWASHER'); 
+  const [productFactory, setProductFactory] = useState([]);
+  const [selectedProductFactory, setSelectedProductFactory] =
+    useState("DISHWASHER");
 
- // Fetch product factories from the API
-useEffect(() => {
-  const fetchProductFactories = async () => {
-    try {
-      const response = await axios.get(
-        `${config.BASE_URL}?dataset=getProductFactorySearch`, 
-        { headers: { 'Content-Type': 'application/json', 'api-key': config.apiKey } }
-      );
-      const data = response.data;
-      if (data && data.status === 'success') {
-        setProductFactory(data.data.productFactory || []);
+  useEffect(() => {
+    const fetchProductFactories = async () => {
+      try {
+        const response = await axios.get(
+          `${config.BASE_URL}?dataset=getProductFactorySearch`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "api-key": config.apiKey,
+            },
+          }
+        );
+        const data = response.data;
+        if (data && data.status === "success") {
+          setProductFactory(data.data.productFactory || []);
+        }
+      } catch (error) {
+        console.error("Error fetching product factories", error);
       }
-    } catch (error) {
-      console.error('Error fetching product factories', error);
-    }
-  };
-  fetchProductFactories();
-}, []);
+    };
+    fetchProductFactories();
+  }, []);
 
   const handleProductFactoryChange = (value) => {
     setSelectedProductFactory(value);
-    
   };
 
   const injectGraph = useCallback((graphData, id) => {
     if (graphData) {
       const svg = d3.select(`#${id}`);
-      svg.selectAll('*').remove(); 
+      svg.selectAll("*").remove();
 
       const margin = { top: 20, right: 30, bottom: 50, left: 40 };
-      const width =800;
+      const width = 800;
       const height = 400;
 
-      const svgElement = svg.append('svg')
-        .attr('width', width)
-        .attr('height', height);
+      const svgElement = svg
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
 
-      const x = d3.scaleBand()
-        .domain(graphData.map(d => d.label))
+      const x = d3
+        .scaleBand()
+        .domain(graphData.map((d) => d.label))
         .range([margin.left, width - margin.right])
         .padding(0.1);
 
-      const y = d3.scaleLinear()
-        .domain([0, d3.max(graphData, d => d.value)])
+      const y = d3
+        .scaleLinear()
+        .domain([0, d3.max(graphData, (d) => d.value)])
         .nice()
         .range([height - margin.bottom, margin.top]);
 
-      svgElement.append('g')
-        .selectAll('rect')
+      svgElement
+        .append("g")
+        .selectAll("rect")
         .data(graphData)
-        .enter().append('rect')
-        .attr('x', d => x(d.label))
-        .attr('y', d => y(d.value))
-        .attr('height', d => y(0) - y(d.value))
-        .attr('width', x.bandwidth())
-        .attr('fill', '#69b3a2');
+        .enter()
+        .append("rect")
+        .attr("x", (d) => x(d.label))
+        .attr("y", (d) => y(d.value))
+        .attr("height", (d) => y(0) - y(d.value))
+        .attr("width", x.bandwidth())
+        .attr("fill", "#69b3a2");
 
-      svgElement.append('g')
-        .selectAll('text')
+      svgElement
+        .append("g")
+        .selectAll("text")
         .data(graphData)
-        .enter().append('text')
-        .attr('x', d => x(d.label) + x.bandwidth() / 2) 
-        .attr('y', d => y(d.value) - 5) 
-        .attr('text-anchor', 'middle') 
-        .text(d => d.value) 
-        .style('fill', 'black') 
-        .style('font-size', '12px'); 
+        .enter()
+        .append("text")
+        .attr("x", (d) => x(d.label) + x.bandwidth() / 2)
+        .attr("y", (d) => y(d.value) - 5)
+        .attr("text-anchor", "middle")
+        .text((d) => d.value)
+        .style("fill", "black")
+        .style("font-size", "12px");
 
-      svgElement.append('g')
-        .attr('transform', `translate(0,${height - margin.bottom})`)
+      svgElement
+        .append("g")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
         .call(d3.axisBottom(x))
-        .selectAll('text')
-        .style('text-anchor', 'end') 
-        .style('font-size', '10px')
-        .attr('transform', 'rotate(-25)');
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .style("font-size", "10px")
+        .attr("transform", "rotate(-25)");
 
-      svgElement.append('g')
-        .attr('transform', `translate(${margin.left},0)`)
+      svgElement
+        .append("g")
+        .attr("transform", `translate(${margin.left},0)`)
         .call(d3.axisLeft(y));
     }
   }, []);
 
-  const handleQuestionClick = useCallback(async (index) => {
-    const question = predefinedQuestions[index];
-    const questionId = uuidv4();
-    const answerId = uuidv4();
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { id: questionId, type: "question", text: question },
-    ]);
+  const handleQuestionClick = useCallback(
+    async (index) => {
+      const question = predefinedQuestions[index];
+      const questionId = uuidv4();
+      const answerId = uuidv4();
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { id: questionId, type: "question", text: question },
+      ]);
 
-    try {
-      setLoading(true);
-      const response = await axios.get(config.BASE_URL, {
-        headers: {
-          "content-type": "application/json",
-          "api-key": config.apiKey,
-        },
-       
-        params: {
-          dataset: "search",
-          prompt: question,
-          productFactory: selectedProductFactory
-        },
-      });
-      const markdown = convertJsonToMarkdown(response.data.Content, answerId);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: answerId,
-          type: "answer",
-          text: markdown,
-          meta: {
-            data: response.data.Content,
+      try {
+        setLoading(true);
+        const response = await axios.get(config.BASE_URL, {
+          headers: {
+            "content-type": "application/json",
+            "api-key": config.apiKey,
           },
-        },
-      ]);
-    } catch (error) {
-      console.error("Error fetching data", error);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { id: answerId, type: "answer", text: "Error fetching data" },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedProductFactory]);
+          params: {
+            dataset: "search",
+            prompt: question,
+            productFactory: selectedProductFactory,
+          },
+        });
+
+        const { markdown, graphs } = convertJsonToMarkdown(
+          response.data.Content,
+          answerId
+        );
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: answerId,
+            type: "answer",
+            text: markdown,
+            meta: {
+              data: response.data.Content,
+            },
+          },
+        ]);
+
+        graphs.forEach(({ graphData, divId }) => {
+          setTimeout(() => injectGraph(graphData, divId), 1000);
+        });
+      } catch (error) {
+        console.error("Error fetching data", error);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { id: answerId, type: "answer", text: "Error fetching data" },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [injectGraph, selectedProductFactory]
+  );
 
   const handleSend = useCallback(async () => {
     if (input.trim()) {
@@ -223,11 +257,14 @@ useEffect(() => {
           params: {
             dataset: "search",
             prompt: currentInput,
-            productFactory: selectedProductFactory 
+            productFactory: selectedProductFactory,
           },
         });
 
-        const markdown = convertJsonToMarkdown(response.data.Content, answerId);
+        const { markdown, graphs } = convertJsonToMarkdown(
+          response.data.Content,
+          answerId
+        );
         setMessages((prevMessages) => [
           ...prevMessages,
           {
@@ -239,6 +276,10 @@ useEffect(() => {
             },
           },
         ]);
+
+        graphs.forEach(({ graphData, divId }) => {
+          setTimeout(() => injectGraph(graphData, divId), 1000);
+        });
       } catch (error) {
         console.error("Error fetching data", error);
         setMessages((prevMessages) => [
@@ -249,7 +290,7 @@ useEffect(() => {
         setLoading(false);
       }
     }
-  }, [input, selectedProductFactory]);
+  }, [input, injectGraph, selectedProductFactory]);
 
   const handleInputChange = useCallback((e) => {
     setInput(e.target.value);
@@ -292,15 +333,20 @@ useEffect(() => {
   return (
     <Layout className="chat-layout">
       <Content className="chat-content">
-      <Row gutter={16}>
+        <Row gutter={16}>
           {/* Product & Factory Dropdown */}
           <Col span={4}>
-            <Form.Item label="Product & Factory" labelCol={{ span: 24 }} wrapperCol={{ span: 24 }} required>
+            <Form.Item
+              label="Product & Factory"
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+              required
+            >
               <Select
                 value={selectedProductFactory}
                 onChange={handleProductFactoryChange}
                 placeholder="Select Product & Factory"
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
               >
                 {/* <Option value="DISHWASHER">DISHWASHER</Option> */}
                 {productFactory.map((factory) => (
@@ -321,14 +367,12 @@ useEffect(() => {
                   onClick={() => handleQuestionClick(index)}
                 >
                   <p>{question}</p>
-                  
                 </Button>
               ))}
             </div>
           </Col>
         </Row>
 
-        
         <Typography.Paragraph
           style={{ margin: "2px 0", textAlign: "center", color: "#1C4E80" }}
         >
@@ -372,6 +416,8 @@ useEffect(() => {
 
 const convertJsonToMarkdown = (data, messageId) => {
   let markdown = "";
+  let graphs = [];
+
   data.forEach((item, index) => {
     if (item.type === "text") {
       markdown += `${item.description}\n\n`;
@@ -379,13 +425,29 @@ const convertJsonToMarkdown = (data, messageId) => {
       markdown += `<Button data-tableid="${index}" data-messageid="${messageId}" class="export-button"> Export To Excel</Button>\n`;
       markdown += `| ${item.headers.join(" | ")} |\n`;
       markdown += `| ${item.headers.map(() => "---").join(" | ")} |\n`;
+
       item.rows.forEach((row) => {
         markdown += `| ${row.join(" | ")} |\n`;
       });
-      markdown += `\n`;
+      markdown += "\n";
+
+      if (index === 0) {
+        const divId = `graph-placeholder-${item.type}-${Math.random()
+          .toString(36)
+          .substring(7)}`;
+        markdown += `<div id="${divId}"></div>\n\n`;
+
+        const graphData = item.rows.map((row) => ({
+          label: row[0],
+          value: +row[1],
+        }));
+
+        graphs.push({ graphData, divId });
+      }
     }
   });
-  return markdown;
+
+  return { markdown, graphs };
 };
 
 const tableDataToCSV = (data) => {
